@@ -38,7 +38,7 @@
 
 ## 步骤五：调用智能合约
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/5.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/5.jpg)
 
 这里调用了合约内的get函数和set函数，get函数可以在屏幕上打印出预设的一条字符串，set函数可以修改预设的字符串的内容，使用set函数修改内容后再次调用get函数可以打印出修改后的内容。
 
@@ -54,9 +54,13 @@
 
 ## 步骤七：获取区块数据
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-1.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-1.jpg)
+
+
 
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-2.png)
+
+
 
 上面两图是第一个区块和第二个区块的内容。
 
@@ -72,7 +76,7 @@
 
 ## 步骤九：再次查看区块高度
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/9.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/9.jpg)
 
 此时的区块高度为4.
 

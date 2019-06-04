@@ -56,7 +56,7 @@
 
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-1.jpg)
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-2.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-2.jpg)
 
 上面两图是第一个区块和第二个区块的内容。
 
@@ -64,7 +64,7 @@
 
 ## 步骤八：按CNS方式部署HelloWorld智能合约
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/8.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/8.jpg)
 
 使用CNS方式部署后可以不使用合约地址而调用合约中的函数。
 
@@ -82,7 +82,7 @@
 
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/10-1.png)
 
-![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/10-2.png)
+![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/10-2.jpg)
 
 这两张图是第三个、第四个区块的内容。
 

@@ -56,11 +56,7 @@
 
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-1.jpg)
 
-
-
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/7-2.png)
-
-
 
 上面两图是第一个区块和第二个区块的内容。
 
@@ -89,3 +85,4 @@
 ![img](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%BF%81%E7%84%95%E6%BB%A8/WHB-day1-img/10-2.png)
 
 这两张图是第三个、第四个区块的内容。
+

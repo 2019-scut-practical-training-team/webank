@@ -24,7 +24,7 @@ $ ./start.sh
 getBlockNumber
 ```
 
-![1559031462413](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559031462413.png)
+![1559031462413](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559031462413.png)
 
 
 
@@ -36,7 +36,7 @@ getBlockNumber
 getBlockByNumber 0
 ```
 
-![1559031698568](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559031698568.png)
+![1559031698568](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559031698568.png)
 
 
 
@@ -48,7 +48,7 @@ getBlockByNumber 0
 deploy HelloWorld
 ```
 
-![1559031812933](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559031812933.png)
+![1559031812933](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559031812933.png)
 
 
 
@@ -61,7 +61,7 @@ deploy HelloWorld
 getDeployLog
 ```
 
-![1559031969206](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559031969206.png)
+![1559031969206](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559031969206.png)
 
 
 
@@ -85,9 +85,9 @@ call helloWorld [部署时生产的hash值] set [要修改的字符串]
 call HelloWorld [部署时生产的hash值] get
 ```
 
-![1559032495129](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559032495129.png)
+![1559032495129](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559032495129.png)
 
-![1559032331607](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559032331607.png)
+![1559032331607](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559032331607.png)
 
 
 
@@ -99,7 +99,7 @@ call HelloWorld [部署时生产的hash值] get
 getBlockNumber
 ```
 
-![1559032709692](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559032709692.png)
+![1559032709692](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559032709692.png)
 
 
 
@@ -117,9 +117,9 @@ getBlockNumber 0
 getBlockNumber 1
 ```
 
-![1559032783884](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559032783884.png)
+![1559032783884](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559032783884.png)
 
-![1559032806988](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559032806988.png)
+![1559032806988](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559032806988.png)
 
 
 
@@ -132,7 +132,7 @@ getBlockNumber 1
 deployByCNS HelloWorld scut
 ```
 
-![1559033034402](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559033034402.png)
+![1559033034402](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559033034402.png)
 
 
 
@@ -145,7 +145,7 @@ deployByCNS HelloWorld scut
 getBlockNumber
 ```
 
-![1559033241426](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559033241426.png)
+![1559033241426](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559033241426.png)
 
 
 
@@ -165,7 +165,7 @@ getBlockByNumber 3
 
 
 
-![1559033315935](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559033315935.png)
+![1559033315935](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559033315935.png)
 
-![1559033338968](C:\Users\MAX\AppData\Roaming\Typora\typora-user-images\1559033338968.png)
+![1559033338968](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559033338968.png)
 

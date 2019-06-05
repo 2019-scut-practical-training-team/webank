@@ -2,10 +2,10 @@
 打开控制台  ./start.sh  
 查看区块高度 getBlockNumber  
 ![](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png)
-#### 2、获取区块数据####
+#### 2、获取区块数据 ####
 getBlockByNumber 0  
 ![](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%A7%A6%E5%8D%8E/image/2.png)
-#### 3、部署HelloWorld智能合约####
+#### 3、部署HelloWorld智能合约 ####
 deploy HelloWorld  
 ![](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E7%A7%A6%E5%8D%8E/image/3.png)
 #### 4、使用查看getDeployLog ####

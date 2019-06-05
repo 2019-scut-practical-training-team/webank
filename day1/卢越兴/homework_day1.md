@@ -12,7 +12,7 @@ $ ./start.sh
 
 
 
-![1559031106624](https://github.com/Max-Loo/ImageForMarkdown/blob/master/1559031106624.png)
+![1559031106624](https://github.com/Max-Loo/ImageForMarkdown/blob/master/For%20enterprise%20software%20training/For%20Day1%20Exercise/1559031106624.png)
 
 
 

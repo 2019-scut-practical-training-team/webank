@@ -58,6 +58,146 @@
 
 3. 然后执行`main()`函数
 
-   1. 
+   1. 先设置好ip参数
+
+      ```bash
+      # 检查是否有指定的输出目录，没有的话默认输出在当前的目录
+      output_dir="$(pwd)/${output_dir}"
+      
+      # 检查是否有设置ip参数
+      [ -z $use_ip_param ] && help 'ERROR: Please set -l or -f option.'     
+      
+      if [ "${use_ip_param}" == "true" ];then              # 以参数的方式设置ip参数
+          ip_array=(${ip_param//,/ })
+      elif [ "${use_ip_param}" == "false" ];then            # 以文件的方式设置ip参数
+          if ! parse_ip_config $ip_file ;then               # 利用 parse_ip_config 函数转换保存了ip参数的文件
+              echo "Parse $ip_file error!"
+              exit 1
+          fi
+      else                               
+          help 
+      fi
+      ```
+
+      
+
+   2. 在保证`output_dir`为空的前提下下载*fisco-bcos*，并检查版本是否兼容
+
+      ```bash
+      if [ -z ${docker_mode} ];then
+          if [[ -z ${bin_path} && -z ${OS} ]];then
+              # 省略中间的代码
+              echo "Binary check passed."
+          fi
+      fi
+      ```
+
+      
+
+   3. 如果证书为空或者证书文件不存在，就新创建一个，否则将证书文件复制到当前目录下
+
+      ```bash
+      if [ -z ${CertConfig} ] || [ ! -e ${CertConfig} ];then
+          # CertConfig="${output_dir}/cert.cnf"
+          generate_cert_conf "cert.cnf"
+      else 
+         cp ${CertConfig} .
+      fi
+      ```
+
+      
+
+   4. 如果采用输入参数的方式输入ip参数时，还要转换机构和群组的信息
+
+      ```bas
+      if [ "${use_ip_param}" == "true" ];then
+          for i in $(seq 0 ${#ip_array[*]});do
+              agency_array[i]="agency"
+              group_array[i]=1
+          done
+      fi
+      ```
+
+      
+
+   5. 准备机构的证书
+
+      ```bash
+      echo "=============================================================="
+      if [ ! -e "$ca_file" ]; then
+          echo "Generating CA key..."
+          # 省略中间的代码
+          ca_file="${output_dir}/cert/ca.key"
+      fi
+      ```
+
+      
+
+   6. 给每个ip下的每个节点生成它的密钥
+
+      ```bash
+      echo "=============================================================="
+      echo "Generating keys ..."
+      nodeid_list=""
+      ip_list=""
+      count=0
+      server_count=0
+      groups=
+      ip_node_counts=
+      groups_count=
+      for line in ${ip_array[*]};do
+          # 省略中间的代码
+      done 
+      ```
+
+      
+
+   7. 给每个ip的每个节点生成配置信息
+
+      ```bash
+      ip_node_counts=()
+      echo "=============================================================="
+      echo "Generating configurations..."
+      cd ${current_dir}
+      server_count=0
+      for line in ${ip_array[*]};do
+          # 省略中间代码
+          ((++server_count))
+      done 
+      rm ${output_dir}/${logfile}
+      if [ "${use_ip_param}" == "false" ];then
+      # 省略中间代码
+      fi
+      
+      }
+      ```
+
+      
 
 4. 最后执行`print_result()`函数，将执行脚本后的结果打印到终端上。
+
+   ```bash
+   print_result()
+   {
+   echo "================================================================"
+   LOG_INFO "Execute the following command to get FISCO-BCOS console"
+   echo " bash <(curl -s https://raw.githubusercontent.com/FISCO-BCOS/console/master/tools/download_console.sh)"
+   echo "================================================================"
+   [ -z ${docker_mode} ] && LOG_INFO "FISCO-BCOS Path   : $bin_path"
+   [ ! -z ${docker_mode} ] && LOG_INFO "Docker tag        : latest"
+   [ ! -z $ip_file ] && LOG_INFO "IP List File      : $ip_file"
+   # [ ! -z $ip_file ] && LOG_INFO -e "Agencies/groups : ${#agency_array[@]}/${#groups[@]}"
+   LOG_INFO "Start Port        : ${port_start[*]}"
+   LOG_INFO "Server IP         : ${ip_array[*]}"
+   LOG_INFO "State Type        : ${state_type}"
+   LOG_INFO "RPC listen IP     : ${listen_ip}"
+   [ ! -z ${pkcs12_passwd} ] && LOG_INFO "SDK PKCS12 Passwd : ${pkcs12_passwd}"
+   LOG_INFO "Output Dir        : ${output_dir}"
+   LOG_INFO "CA Key Path       : $ca_file"
+   [ ! -z $guomi_mode ] && LOG_INFO "Guomi mode        : $guomi_mode"
+   echo "================================================================"
+   LOG_INFO "All completed. Files in ${output_dir}"
+   }
+   ```
+
+   

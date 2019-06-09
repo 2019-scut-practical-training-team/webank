@@ -154,7 +154,7 @@
 
    4. 如果采用输入参数的方式输入ip参数时，还要转换机构和群组的信息
 
-      ```bas
+      ```bash
       if [ "${use_ip_param}" == "true" ];then
           for i in $(seq 0 ${#ip_array[*]});do
               agency_array[i]="agency"

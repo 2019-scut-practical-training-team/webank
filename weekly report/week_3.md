@@ -1,4 +1,4 @@
-# 第三周周报
+﻿# 第三周周报
 
 ## 完成的工作
 
@@ -26,3 +26,4 @@
 * [卢越兴第三周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E5%8D%A2%E8%B6%8A%E5%85%B4/week3_report.md)
 * [秦华第三周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/weekly_report3.md)
 * [翁焕滨第三周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/翁焕滨/翁焕滨-第三周周报.md)
+* [吴金泽第三周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/吴金泽/weekly_report3.md)

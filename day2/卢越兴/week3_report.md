@@ -6,7 +6,7 @@
 
 - 完成[僵尸游戏](https://cryptozombies.io/)上的的关于使用使用*Solidity*编写智能合约的教程。
 
-  ![结果](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For%20enterprise%20software%20training/For_Day2/Week3_Report/1.png)
+  ![结果](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week3_Report/1.png)
 
 
 

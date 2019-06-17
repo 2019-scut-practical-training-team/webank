@@ -23,5 +23,5 @@
 
 ##  工作报告
 
-* [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/邹鹏宇：第一周周报.md)
+* [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/weekly_report1.md)
 

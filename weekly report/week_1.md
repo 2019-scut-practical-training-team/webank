@@ -18,3 +18,10 @@
 ### 下周要完成的工作
 
 1. 对 build chain.sh 的研读结果进行讨论，并完成报告和PPT
+
+
+
+##  工作报告
+
+* [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/邹鹏宇：第一周周报.md)
+

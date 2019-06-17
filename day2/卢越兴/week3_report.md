@@ -274,4 +274,11 @@
   }
   ```
 
-  
+
+
+
+### 下周的任务
+
+- 参考[Solidity官方文档](https://solidity.readthedocs.io)继续学习Solidity语言
+- 按照要求，完成对LAG积分合约的开发
+- 学习使用`get_account.sh`脚本生成用户

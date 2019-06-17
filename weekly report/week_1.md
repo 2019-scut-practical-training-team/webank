@@ -1,4 +1,4 @@
-# 第一周周报
+﻿# 第一周周报
 
 
 
@@ -18,3 +18,13 @@
 ### 下周要完成的工作
 
 1. 对 build chain.sh 的研读结果进行讨论，并完成报告和PPT
+
+
+
+##  工作报告
+
+* [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/weekly_report1.md)
+* [卢越兴第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/%E5%8D%A2%E8%B6%8A%E5%85%B4/week1_report.md)
+* [翁焕滨第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/翁焕滨/翁焕滨-第一周周报.md)
+* [秦华第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/%E7%A7%A6%E5%8D%8E/weekly_report1.md)
+* [吴金泽第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/吴金泽/weekly_report1.md)

@@ -8,8 +8,9 @@
 3rd-team         #项目根目录
 ├── LICENSE       #开源证书
 ├── README.md      #项目说明
-├── day1            #第一次的练习
-└── weekly report    #周报
+├── day1            #第一次企业老师上课后个人工作成果
+├── day2             #第二次。。。
+└── weekly report    #小组周报
 
 ```
 

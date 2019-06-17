@@ -25,3 +25,4 @@
 
 * [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/weekly_report1.md)
 * [卢越兴第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/%E5%8D%A2%E8%B6%8A%E5%85%B4/week1_report.md)
+* [翁焕滨第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/翁焕滨/翁焕滨-第一周周报.md)

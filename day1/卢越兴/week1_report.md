@@ -26,6 +26,6 @@
 
 ### 下周要完成的任务
 
-- 完成对`build_chain.sh`的研读报告，详情查看[研读报告](https://github.com/2019-scut-practical-training-team/webank/blob/master/day1/%E5%AF%B9build_chain.sh%E7%9A%84%E7%90%86%E8%A7%A3.md)。
+- 完成对`build_chain.sh`的研读，并编写一份*Markdown*版本的报告。
 - 继续阅读[FISCO BCOS技术文档](https://fisco-bcos-documentation.readthedocs.io/zh_CN/latest/index.html)。
 

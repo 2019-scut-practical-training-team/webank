@@ -23,4 +23,9 @@
 
 ##  工作报告
 
+<<<<<<< HEAD
 [邹鹏宇第一周工作报告]([https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/%E9%82%B9%E9%B9%8F%E5%AE%87/%E9%82%B9%E9%B9%8F%E5%AE%87%EF%BC%9A%E7%AC%AC%E4%B8%80%E5%91%A8%E5%91%A8%E6%8A%A5.md](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/邹鹏宇：第一周周报.md))
+=======
+* [邹鹏宇第一周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day1/邹鹏宇/邹鹏宇：第一周周报.md)
+
+>>>>>>> 437ea02bd303c61d431ced93eb9c5df4920ac366

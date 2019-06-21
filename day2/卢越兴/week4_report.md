@@ -131,29 +131,28 @@ contract LAGCredit {
     ![my balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/7_balanceOfMine.png)
 
   - 使用`get_account.sh`脚本生成一个账号
-  
+
     ```bash
     $ bash get_account.sh
     ```
     
-  
-  
 
   
-- 查看这个账号的余额
-  
-  ![get balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/8_balanceOf.png)
-  
-- 给这个账号转账
-  
-    ![transfer](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/9_transfer.png)
-  
+
+  - 查看这个账号的余额
+    
+    ![get balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/8_balanceOf.png)
+    
+  - 给这个账号转账
+
+    ![](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/9_transfer.png)
+
   - 再次查看这个账号的余额
-  
+
     ![](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/10_balanceOf.png)
-  
+
   - 查看自己的余额
-  
+
     ![my balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/11_balanceOfMine.png)
 
 

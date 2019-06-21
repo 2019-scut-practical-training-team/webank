@@ -134,17 +134,18 @@ contract LAGCredit {
   
     ```bash
     $ bash get_account.sh 
-    [INFO] Account Address   : 0x0c1f490580a6161d605660fd0081e4fd9206ba74
-    [INFO] Private Key (pem) : accounts/0x0c1f490580a6161d605660fd0081e4fd9206ba74.pem
-  [INFO] Private Key: 0xece7dfffe674f40c22ae24e06ec890b90277bec481890e2f1a6ac97d5dd02b2c
+    #[INFO] Account Address   : #0x0c1f490580a6161d605660fd0081e4fd9206ba74
+    #[INFO] Private Key (pem) : #accounts/0x0c1f490580a6161d605660fd0081e4fd9206ba74.pem
+  #[INFO] Private Key: #0xece7dfffe674f40c22ae24e06ec890b90277bec481890e2f1a6ac97d5dd02b2c
     ```
 
-    
+  
 
-  - 查看这个账号的余额
-
-    ![get balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/8_balanceOf.png)
-
+  
+- 查看这个账号的余额
+  
+  ![get balance](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/8_balanceOf.png)
+  
   - 给这个账号转账
   
     ![transfer](https://raw.githubusercontent.com/Max-Loo/ImageForMarkdown/master/For_enterprise_software_training/For_Day2/Week4_Report/9_transfer.png)

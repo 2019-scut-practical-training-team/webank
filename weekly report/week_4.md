@@ -24,4 +24,4 @@
 ## 工作报告
 
 * [邹鹏宇第四周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/weekly_reprot4.md)
-* [吴金泽第四周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/吴金泽/weekly_reprot4.md)
+* [吴金泽第四周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/吴金泽/weekly_report4.md)

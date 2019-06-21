@@ -134,6 +134,9 @@ contract LAGCredit {
 
     ```bash
     $ bash get_account.sh
+    # Account Address   : 0x0c1f490580a6161d605660fd0081e4fd9206ba74
+    # Private Key (pem) : accounts/0x0c1f490580a6161d605660fd0081e4fd9206ba74.pem
+    # Private Key: 0xece7dfffe674f40c22ae24e06ec890b90277bec481890e2f1a6ac97d5dd02b2c
     ```
     
 

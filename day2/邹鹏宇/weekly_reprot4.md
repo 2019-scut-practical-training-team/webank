@@ -126,11 +126,13 @@
 
     ![img](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/img/8.png)
 
-  * 然后将spring-boot-starter项目导入eclipse中，运行ContractTest.java发现并没有得到相应的输出，合约可以部署成功，测试中HelloWorld的set操作也会执行，链上块的高度会增加2，但是没有得到合约的地址等信息，暂时未找到原因。后改成使用IntelliJ编译，在修改了一些项目设置和配置后可以成功运行，并且得到合约地址，利用该地址在控制台中查看totalsupply，且能够成功，至此通过spring-boot-starter部署合约完成。
+  * 然后将spring-boot-starter项目导入eclipse中，运行ContractTest.java发现并没有得到相应的输出，合约可以部署成功，测试中HelloWorld的set操作也会执行，链上块的高度会增加2，但是没有得到合约的地址等信息，暂时未找到原因。此处遇到的问题是通过运行部署合约，块的高度会增加，但是通过控制台的getDeployLog命令无法获取部署的记录，求助助教后得到原因，控制台目录下有一个log文件会存储部署的信息，但是只会存储本地的部署记录，而不会记录链上的部署记录。
+
+    ​         后改成使用IntelliJ编译，在修改了一些项目设置和配置后可以成功运行，并且得到合约地址，利用该地址在控制台中查看totalsupply，且能够成功，至此通过spring-boot-starter部署合约完成。
 
     ![img](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/img/9.png)
 
     ![img](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/img/10.png)
-
+    
     
 

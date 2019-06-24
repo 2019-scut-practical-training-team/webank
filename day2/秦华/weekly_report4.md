@@ -49,18 +49,19 @@
 2、使用get_account.sh获得账户地址  
 ![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/1.png)
 3、在remix上部署合约，并执行各函数  
-
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/2.png)
 4、使用spring-boot-starter部署合约  
 （1）获取项目源码  
 `git clone https://github.com/FISCO-BCOS/spring-boot-starter.git`   
 （2）将节点所在目录nodes/${ip}/sdk下的ca.crt、node.crt和node.key文件拷贝到项目的src/test/resources目录下供SDK使用  
 （3）在项目中添加自己编写的Integratino.sol合约，运行./sol2java.sh  
-
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/3.png)
 （4）编译并运行测试案例，在项目根目录下运行：  
 `./gradlew build ` 
-
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/4.png)
 （5）在控制台部署并调用合约  
-
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/5.png)
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/6.png)
 ## 下周任务安排 ##
 1、继续熟悉fisco-bcos的开发文档。  
 2、进一步了解spring-boot项目的开发。

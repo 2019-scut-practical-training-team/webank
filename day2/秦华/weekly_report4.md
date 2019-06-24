@@ -47,7 +47,7 @@
         } 
     } 
 2、使用get_account.sh获得账户地址  
-
+![](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/%E7%A7%A6%E5%8D%8E/image/1.png)
 3、在remix上部署合约，并执行各函数  
 
 4、使用spring-boot-starter部署合约  

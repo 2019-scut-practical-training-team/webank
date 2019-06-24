@@ -130,8 +130,48 @@
 
     ​         后改成使用IntelliJ编译，在修改了一些项目设置和配置后可以成功运行，并且得到合约地址，利用该地址在控制台中查看totalsupply，且能够成功，至此通过spring-boot-starter部署合约完成。
 
+    ```java
+package org.fisco.bcos;
+    
+    import static org.junit.Assert.assertTrue;
+    import java.math.BigInteger;
+    
+    import org.fisco.bcos.constants.GasConstants;
+    import org.fisco.bcos.temp.HelloWorld;
+    import org.fisco.bcos.temp.LAGCreditTest;
+    import org.fisco.bcos.web3j.crypto.Credentials;
+    import org.fisco.bcos.web3j.protocol.Web3j;
+    import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
+    import org.junit.Test;
+    import org.springframework.beans.factory.annotation.Autowired;
+    
+    public class ContractTest extends BaseTest {
+    
+        @Autowired private Web3j web3j;
+        @Autowired private Credentials credentials;
+    
+        @Test
+        public void deployAndCallHelloWorld() throws Exception {
+            // deploy contract
+            LAGCreditTest lagCreditTest = LAGCreditTest.deploy(
+                    web3j,
+                    credentials,
+                    new StaticGasProvider(
+                            GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT),
+                    new BigInteger("1000"), "scut", "zpy").send();
+    
+                    if(lagCreditTest != null) {
+                        System.out.println("LAGCreditTest address is: " +                                      lagCreditTest.getContractAddress());
+    
+            }
+        }
+    }
+    ```
+    
+    
+    
     ![img](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/img/9.png)
-
+    
     ![img](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day2/邹鹏宇/img/10.png)
     
     

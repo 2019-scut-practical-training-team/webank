@@ -23,19 +23,17 @@
 
 ## 6月26日
 
-* 编写[详细设计文档]([https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/%E9%A1%B9%E7%9B%AE%E8%AF%A6%E7%BB%86%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%20v1.docx](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/项目详细设计文档 v1.docx))
+* 编写[详细设计文档](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/项目详细设计文档 v1.docx)
   * 需求概述
   * 需求分析（用例图及各个用例）
   * 非功能需求
   * 部署方案
-* 确定[数据模型]([https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B.docx](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/数据模型.docx))
-
-
+* 确定[数据模型](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/数据模型.docx)
 
 ## 6月27日
 
 * 后端开发团队编写[API接口文档](<https://g3webank.postman.co/collections/6150471-3e50ab27-7828-4b22-9cf6-05e7ee83d393?version=latest&workspace=1cd9b014-5152-4f7f-bf6e-765e3810ac8e>)，并与前端开发人员讨论、确认
-* 完成了[原型图]([https://github.com/2019-scut-practical-training-team/webank/tree/dev/final/doc/%E5%8E%9F%E5%9E%8B%E5%9B%BE](https://github.com/2019-scut-practical-training-team/webank/tree/dev/final/doc/原型图))的绘制
+* 完成了[原型图](https://github.com/2019-scut-practical-training-team/webank/tree/dev/final/doc/原型图)的绘制
 * 开始智能合约的编写
 * 前后端代码开始开发
 

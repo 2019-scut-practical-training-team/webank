@@ -23,7 +23,7 @@
 
 ## 6月26日
 
-* 编写详细设计文档
+* 编写[详细设计文档](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/项目详细设计文档 v2.docx)
   * 需求概述
   * 需求分析（用例图及各个用例）
   * 非功能需求

@@ -12,7 +12,7 @@
       <el-menu-item index="1" class="el-menu-item-self">宠物市场</el-menu-item>
       <el-menu-item index="0" class="el-menu-item-self">个人信息</el-menu-item>
     </el-menu>
-    <component :is="activeComponent"></component>
+    <component :is="activeComponent" class="user-container"></component>
   </div>
 </template>
 
@@ -59,5 +59,9 @@ export default {
 .el-menu-item-self {
   float: right !important;
   font-size: 16px;
+}
+.user-container {
+  display: flex;
+  justify-content: center;
 }
 </style>

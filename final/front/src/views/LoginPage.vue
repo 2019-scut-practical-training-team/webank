@@ -5,11 +5,17 @@
         <div class="grid-top" :style="backgroundHeight"></div>
       </el-col>
     </el-row>
-    <el-form ref="form" :model="form" label-width="auto" class="login-form" label-position="top">
+    <el-form
+      ref="form"
+      :model="form"
+      label-width="auto"
+      class="login-form"
+      label-position="top"
+    >
       <el-form-item>
         <span class="login-header">登录</span>
       </el-form-item>
-      <el-divider></el-divider>
+      <!-- <el-divider style="margin-bottom: 0"></el-divider> -->
       <el-form-item label="密钥：">
         <el-input
           v-model="form.privateKey"
@@ -20,16 +26,29 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="button-width">登录</el-button>
+        <el-button type="primary" class="button-width" @click="login()"
+          >登录</el-button
+        >
       </el-form-item>
+      <el-divider content-position="center">还没有账号？</el-divider>
       <el-form-item>
-        <el-button class="button-width" @click="signUpDialogVisible = true">注册</el-button>
+        <el-button class="button-width" @click="signUpDialogVisible = true"
+          >注册</el-button
+        >
       </el-form-item>
     </el-form>
-    <el-dialog title="提示" :visible.sync="signUpDialogVisible" width="380px" show-close center>
+    <el-dialog
+      title="提示"
+      :visible.sync="signUpDialogVisible"
+      width="380px"
+      show-close
+      center
+    >
       <span>是否确认注册账号</span>
       <span slot="footer">
-        <el-button type="primary" @click="signUpDialogVisible = false">确认</el-button>
+        <el-button type="primary" @click="signUpDialogVisible = false"
+          >确认</el-button
+        >
         <el-button @click="signUpDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -54,11 +73,16 @@ export default {
     // 获取页面的高度
     getHeight() {
       this.backgroundHeight.height = window.innerHeight / 2.8 + "px";
+    },
+    login() {
+      this.$router.push("user");
     }
   },
-  created: function() {
+  created() {
     window.addEventListener("resize", this.getHeight);
     this.getHeight();
+    // 开发需要，直接跳转
+    this.login();
   },
   destroyed() {
     window.removeEventListener("resize", this.getHeight);
@@ -72,7 +96,7 @@ export default {
   min-width: 768px;
 }
 .grid-top {
-  background-color: rgb(160, 207, 255);
+  background-color: #9eceff;
   min-height: 300px;
   max-height: 500px;
   width: 100%;

@@ -5,6 +5,14 @@ import router from "./router";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 
+// 引入模块
+import axios from "axios";
+
+// 设置基础api
+axios.default.baseURL = "http://192.168.110.110:8080";
+// 绑定到Vue上
+Vue.prototype.$axios = axios;
+
 Vue.config.productionTip = true;
 Vue.use(ElementUI);
 

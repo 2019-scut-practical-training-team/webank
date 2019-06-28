@@ -1,9 +1,7 @@
-package com.example.demo.service.impl;
+package com.example.demo.Service.Impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.example.demo.Bean.SigninInfo;
-import com.example.demo.service.Interface.ISigninService;
+import com.example.demo.Service.Interface.ISigninService;
 import org.springframework.stereotype.Service;
 
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="user-page">
     <el-menu
       :default-active="activeIndex"
       mode="horizontal"
@@ -53,6 +53,9 @@ export default {
 </script>
 
 <style scoped>
+.user-page {
+  min-width: 768px;
+}
 .el-menu--horizontal-self {
   padding-right: 100px;
 }
@@ -62,6 +65,7 @@ export default {
 }
 .user-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 </style>

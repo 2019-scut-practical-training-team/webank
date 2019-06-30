@@ -1,85 +1,111 @@
-ï»¿pragma solidity ^0.4.19;
-import "./Factory.sol";
+pragma solidity ^0.4.25;
 import "./DataProcess.sol";
+import "./OrderContract.sol";
 
 contract Market is DataProcess{
-    //å…¨å±€å˜é‡å£°æ˜ï¼šç®¡ç†å‘˜åœ°å€ï¼Œåœ¨å”®å® ç‰©ï¼Œè®¢å•åˆ—è¡¨
-    address private adminAddress;
-    Factory.Pet[] public petOnSell;
-    Factory.Order[] public orderList;
 
-    //æ„é€ å‡½æ•°,è®¾ç½®åˆçº¦éƒ¨ç½²äººä¸ºç®¡ç†å‘˜
-    function Market() public {
-        adminAddress = msg.sender;
+    struct Pet {
+        string petName;
+        string petId;
+        string petType;
+        uint16 petPrice;
+        uint8 petStatus;
+        string petImg;
+        string petIntro;
+        address Owner;
     }
-    //è·å–ç®¡ç†å‘˜åœ°å€ï¼Œä¸éœ€è¦
-    // function getAdmin() constant returns (address){
-    //     return adminAddress;
-    // }
+    //È«¾Ö±äÁ¿ÉùÃ÷£º¹ÜÀíÔ±µØÖ·£¬orderºÏÔ¼µØÖ·£¬ÔÚÊÛ³èÎï£¬¶©µ¥ÁĞ±í
+    address private adminAddress;
+    address orderAddress;
+    OrderContract OD = OrderContract(orderAddress);
+    uint petIdNum=1;
+    Pet[] private petOnSell;
 
-    //ä¿®é¥°ç¬¦ï¼Œåˆ¤æ–­èº«ä»½æ˜¯ä¸æ˜¯ç®¡ç†å‘˜
-    modifier isAdmin {
-        require (msg.sender == adminAddress);
+
+
+    //¹¹Ôìº¯Êı,ÉèÖÃºÏÔ¼²¿ÊğÈËÎª¹ÜÀíÔ±£¬¹ÜÀíÔ±Éí·İÎª2
+    constructor() public {
+        adminAddress = msg.sender;
+        userIden[adminAddress] = 2;
+    }
+
+    //ĞŞÊÎ·û£¬ÅĞ¶ÏÉí·İÊÇ²»ÊÇ¹ÜÀíÔ±
+    modifier isAdmin(address _caller) {
+        require (_caller == adminAddress);
         _;
     }
 
-    //æ˜ å°„ï¼š
-    //åˆ¤æ–­æ˜¯å¦å·²åˆ›å»ºè¿‡å® ç‰©
-    mapping (address => int) createdPet;
-    //åœ°å€ä¸ä½™é¢æ˜ å°„
+    //Ó³Éä£º
+    //ÅĞ¶ÏÊÇ·ñÒÑ´´½¨¹ı³èÎï
+    mapping (address => uint8) createdPet;
+    //µØÖ·ÓëÓà¶îÓ³Éä
     mapping (address => uint) Balance;
-    //åˆ¤æ–­æ˜¯å¦è€ç”¨æˆ·
-    mapping (address => int) oldUser;
-    //ç”¨æˆ·åœ°å€åˆ°å® ç‰©åˆ—è¡¨çš„æ˜ å°„
-    mapping (address => Factory.Pet[]) addressToPetList;
-    //å® ç‰©idåˆ°ç”¨æˆ·åœ°å€çš„æ˜ å°„
+    //ÅĞ¶ÏÊÇ·ñÀÏÓÃ»§
+    mapping (address => uint8) oldUser;
+    //ÓÃ»§µØÖ·µ½³èÎïÁĞ±íµÄÓ³Éä
+    mapping (address => Pet[]) addressToPetList;
+    //³èÎïidµ½ÓÃ»§µØÖ·µÄÓ³Éä
     mapping (string => address) petIdToOwner;
+    //ÓÃ»§µØÖ·ÓëÉí·İµÄÓ³Éä
+    mapping(address => uint8) userIden;
 
 
+    //ÉèÖÃorderºÏÔ¼µØÖ·£¬ÓÃÓÚµ÷ÓÃÆäÖĞµÄº¯Êı
+    function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
+        orderAddress = _orderAddress;
+    }
 
-    //å†…éƒ¨è°ƒç”¨å‡½æ•°ï¼š
-    //åˆå§‹åŒ–ç”¨æˆ·ä½™é¢ä»¥åŠæ˜¯å¦åˆ›å»ºè¿‡å® ç‰©å‚æ•°
+    //ÄÚ²¿µ÷ÓÃº¯Êı£º
+    //³õÊ¼»¯ÓÃ»§Óà¶îÒÔ¼°ÊÇ·ñ´´½¨¹ı³èÎï²ÎÊı
     function initUser() private {
         createdPet[msg.sender] = 0;
         Balance[msg.sender] = 10000;
     }
-    //ä¸ºç”¨æˆ·é…ç½®ä¸€ä¸ªå® ç‰©åˆ—è¡¨
+    //ÎªÓÃ»§ÅäÖÃÒ»¸ö³èÎïÁĞ±í
     function setAddressToPetList() private {
-        Factory.Pet[] storage tempPetList;
+        Pet[] storage tempPetList;
         addressToPetList[msg.sender] = tempPetList;
     }
-    //è®¾ç½®å® ç‰©ä¸»äºº
+    //ÉèÖÃ³èÎïÖ÷ÈË
     function setPetOwner(string _id,address _owner) private {
         petIdToOwner[_id] = _owner;
     }
-    //åˆ›å»ºä¸€ä¸ªæ–°è®¢å•ï¼Œå†…éƒ¨è°ƒç”¨
-    function createOrder(string _id, address _buyer, address _seller, string _time, string _petId, string _petPrice, int _status,string _result) private {
-        orderList.push(Factory.Order(_id, _buyer, _seller, _time, _petId, _petPrice, _status, _result));
-    }
-    //æ”¯ä»˜å¯¹åº”é‡‘é¢ï¼Œå†…éƒ¨è°ƒç”¨
-    function pay(address _from, address _to, uint _price) private {
+
+    //Ö§¸¶¶ÔÓ¦½ğ¶î£¬ÄÚ²¿µ÷ÓÃ
+    function pay(address _from, address _to, uint16 _price) private {
         require(_to != 0x0);
         require(Balance[_from] >= _price);
-        require(Balance[_to] + _price > Balance[_to]); //_valueä¸èƒ½ä¸ºè´Ÿå€¼
+        require(Balance[_to] + _price > Balance[_to]); //_value²»ÄÜÎª¸ºÖµ
         uint previousBalances = Balance[_from] + Balance[_to];
         Balance[_from] -= _price;
         Balance[_to] += _price;
         assert(Balance[_from] + Balance[_to] == previousBalances);
     }
-    //è½¬äº¤å® ç‰©æ‰€æœ‰æƒï¼Œå†…éƒ¨è°ƒç”¨
-    function changePetOwner(address _from, address _to, string _petId) private {
+    //¹ÜÀíÔ±Ê¹ÓÃµÄ×ªÕËº¯Êı£¬ÓÃÓÚÍË»õ·½ÃæµÄ²Ù×÷
+    function payByAdmin(address _from,address _to, uint16 _price, address _caller) public isAdmin(_caller){
+        require(_to != 0x0);
+        require(Balance[_from] >= _price);
+        require(Balance[_to] + _price > Balance[_to]); //_value²»ÄÜÎª¸ºÖµ
+        uint previousBalances = Balance[_from] + Balance[_to];
+        Balance[_from] -= _price;
+        Balance[_to] += _price;
+        assert(Balance[_from] + Balance[_to] == previousBalances);
+    }
+    //×ª½»³èÎïËùÓĞÈ¨£¬ÓÃÓÚ¹ºÂò³èÎïºÍÍË»õÊ±Ê¹ÓÃ
+    function changePetOwner(address _from, address _to, string _petId, address _caller) public isAdmin(_caller) {
         require(_from != 0x0);
         require(petIdToOwner[_petId] == _from);
+        setPetOwner(_petId, _to);
         uint petIndex;
-        //å°†å® ç‰©ä»å–å®¶çš„å® ç‰©åˆ—è¡¨åˆ é™¤ï¼ŒåŠ å…¥ä¹°å®¶çš„å® ç‰©åˆ—è¡¨
+        //½«³èÎï´ÓÂô¼ÒµÄ³èÎïÁĞ±íÉ¾³ı£¬¼ÓÈëÂò¼ÒµÄ³èÎïÁĞ±í
         for(uint i = 0;i < addressToPetList[_from].length;i++){
-            if(keccak256(_petId) == keccak256(addressToPetList[_from][i].petId)){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[_from][i].petId))){
                 addressToPetList[_to].push(addressToPetList[_from][i]);
                 delete addressToPetList[_from][i];
                 petIndex = i;
             }
         }
-        //æ‰‹åŠ¨å°†å–å®¶çš„å® ç‰©åˆ—è¡¨ç§»ä½ï¼Œå¹¶å°†åˆ—è¡¨é•¿åº¦å‡ä¸€
+        //ÊÖ¶¯½«Âô¼ÒµÄ³èÎïÁĞ±íÒÆÎ»£¬²¢½«ÁĞ±í³¤¶È¼õÒ»
         for(i = petIndex;i < addressToPetList[_from].length; i++){
             addressToPetList[_from][i] = addressToPetList[_from][i+1];
         }
@@ -90,18 +116,24 @@ contract Market is DataProcess{
 
 
 
-    //ç”¨æˆ·ç›¸å…³ï¼š
-    //åˆ›å»ºç”¨æˆ·å‡½æ•°ï¼Œåˆå§‹åŒ–ä½™é¢å’Œæ˜¯å¦åˆ›å»ºè¿‡å® ç‰©å‚æ•°
+    //ÓÃ»§Ïà¹Ø£º
+    //´´½¨ÓÃ»§º¯Êı£¬³õÊ¼»¯Óà¶îºÍÊÇ·ñ´´½¨¹ı³èÎï²ÎÊı
     function createUser() public {
         require(oldUser[msg.sender] == 0);
+        require(msg.sender != adminAddress);
         initUser();
         oldUser[msg.sender] = 1;
+        userIden[msg.sender] = 1;
     }
-    //è·å–è°ƒç”¨è€…çš„ä½™é¢
+    //»ñÈ¡ÓÃ»§Éí·İ
+    function getUserIden() public view returns (uint8){
+        return userIden[msg.sender];
+    }
+    //»ñÈ¡µ÷ÓÃÕßµÄÓà¶î
     function getBalanceOfMe() public view returns (uint) {
         return Balance[msg.sender];
     }
-    //é€šè¿‡åœ°å€è·å–ä½™é¢
+    //Í¨¹ıµØÖ·»ñÈ¡Óà¶î
     function getBalace(address _address) public view returns (uint) {
         return Balance[_address];
     }
@@ -109,8 +141,8 @@ contract Market is DataProcess{
 
 
 
-    //å® ç‰©ç›¸å…³ï¼š
-    //è¿”å›ç”¨æˆ·å¯¹åº”çš„å® ç‰©åˆ—è¡¨
+    //³èÎïÏà¹Ø£º
+    //·µ»ØÓÃ»§¶ÔÓ¦µÄ³èÎïÁĞ±í
     function getPetListFromAddress() public view returns (string) {
         string memory result;
         for(uint i=0;i<addressToPetList[msg.sender].length;i++){
@@ -131,8 +163,8 @@ contract Market is DataProcess{
         }
         return result;
     }
-    //å±•ç¤ºæ‰€æœ‰åœ¨å”®å® ç‰©
-    function showPetOnSell() public returns(string){
+    //Õ¹Ê¾ËùÓĞÔÚÊÛ³èÎï
+    function showPetOnSell() public view returns(string){
         string memory result;
         for(uint i=0;i<petOnSell.length;i++){
             result = strConcat(result,petOnSell[i].petName);
@@ -153,40 +185,47 @@ contract Market is DataProcess{
         return result;
     }
 
-    //åˆ›å»ºå® ç‰©ï¼Œè‹¥æ²¡æœ‰åˆ›å»ºè¿‡å°±å…ˆåˆ›å»ºå® ç‰©åˆ—è¡¨å†åˆ›å»ºå® ç‰©
-    function createPet(string _name, string _id, string _type, int _price, int _status, string _img, string _intro, address _owner) public {
-        //åˆ¤æ–­æ˜¯å¦å·²åˆ›å»ºè¿‡å® ç‰©
+    //´´½¨³èÎï£¬ÈôÃ»ÓĞ´´½¨¹ı¾ÍÏÈ´´½¨³èÎïÁĞ±íÔÙ´´½¨³èÎï
+    function createPet(string _name,  string _type, uint16 _price, string _img, string _intro) public {
+        //ÅĞ¶ÏÊÇ·ñÒÑ´´½¨¹ı³èÎï
         if(createdPet[msg.sender] == 0){
             setAddressToPetList();
             createdPet[msg.sender] = 1;
         }
-        //è¿™é‡Œåˆ›å»ºäº†ä¸€ä¸ªæ–°çš„å® ç‰©ï¼Œå¹¶æ”¾å…¥ç”¨æˆ·å¯¹åº”çš„å® ç‰©åˆ—è¡¨
-        addressToPetList[msg.sender].push(Factory.Pet(_name, _id, _type, _price, _status, _img, _intro, _owner));
-        setPetOwner(_id,_owner);
+        //ÕâÀï´´½¨ÁËÒ»¸öĞÂµÄ³èÎï£¬²¢·ÅÈëÓÃ»§¶ÔÓ¦µÄ³èÎïÁĞ±í
+        addressToPetList[msg.sender].push(Pet(_name, getIntToString(petIdNum), _type, _price, 0, _img, _intro, msg.sender));
+        setPetOwner(getIntToString(petIdNum),msg.sender);
     }
-    //è´­ä¹°å® ç‰©
-    function buyPet(string _petId, uint _price, address _seller) public {
+    //¹ºÂò³èÎï
+    function buyPet(string _petId, uint16 _price, string _time, address _seller) public {
         pay(msg.sender, _seller, _price);
-        changePetOwner(_seller, msg.sender, _petId);
+        changePetOwner(_seller, msg.sender, _petId, adminAddress);
+        OD.createOrder( _seller, _time, _petId, _price, adminAddress);
     }
 
-    //å‡ºå”®å® ç‰©
+    //³öÊÛ³èÎï
     function sellPet(string _petId) public {
         require(petIdToOwner[_petId] == msg.sender);
-        Factory.Pet tempPet;
+        Pet storage tempPet;
         for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            if(keccak256(_petId) == keccak256(addressToPetList[msg.sender][i].petId)){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId))){
+                addressToPetList[msg.sender][i].petStatus=1;
                 tempPet = addressToPetList[msg.sender][i];
             }
         }
         petOnSell.push(tempPet);
     }
-    //å–æ¶ˆå‡ºå”®å® ç‰©
+    //È¡Ïû³öÊÛ³èÎï
     function cancelSellPet(string _petId) public {
         require(petIdToOwner[_petId] == msg.sender);
         uint index;
-        for(uint i=0;i<petOnSell.length;i++){
-            if(keccak256(_petId) == keccak256(petOnSell[i].petId)){
+        for(uint i=0;i<addressToPetList[msg.sender].length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId))){
+                addressToPetList[msg.sender][i].petStatus=0;
+            }
+        }
+        for(i=0;i<petOnSell.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petOnSell[i].petId))){
                 delete petOnSell[i];
                 index = i;
                 break;
@@ -198,11 +237,11 @@ contract Market is DataProcess{
         delete petOnSell[petOnSell.length-1];
         petOnSell.length--;
     }
-    //ä¿®æ”¹å® ç‰©ä¿¡æ¯
-    function changePetInfo(string _name, string _id, string _type, int _price, string _img, string _intro) public {
+    //ĞŞ¸Ä³èÎïĞÅÏ¢
+    function changePetInfo(string _name, string _id, string _type, uint16 _price, string _img, string _intro) public view {
         require(petIdToOwner[_id] == msg.sender);
         for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            if(keccak256(addressToPetList[msg.sender][i].petId) == keccak256(_id)){
+            if(keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId)) == keccak256(abi.encodePacked(_id))){
                 _name = addressToPetList[msg.sender][i].petName;
                 _type = addressToPetList[msg.sender][i].petType;
                 _price = addressToPetList[msg.sender][i].petPrice;
@@ -212,123 +251,5 @@ contract Market is DataProcess{
             }
         }
     }
-
-
-    //è®¢å•ç›¸å…³ï¼š
-    //ç®¡ç†å‘˜éƒ¨åˆ†ï¼š
-    //è¿”å›æ‰€æœ‰è®¢å•ï¼ˆç®¡ç†å‘˜æŸ¥çœ‹
-    function adminGetOrderList() public view isAdmin returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
-        for(uint i=0;i<orderList.length;i++){
-            result = strConcat(result,orderList[i].orderId);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].orderTime);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].petId);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].petPrice);
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(orderList[i].orderStatus));
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].returnResult);
-            result = strConcat(result,",");
-
-            buyerAddress.push(orderList[i].orderBuyer);
-            sellerAddress.push(orderList[i].orderSeller);
-        }
-        return (result, buyerAddress, sellerAddress);
-    }
-    //ç®¡ç†å‘˜è·å¾—è¯·æ±‚ä»²è£çš„è®¢å•
-    function adminGetReturnOrderList() public view isAdmin returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
-        for(uint i = 0;i < orderList.length;i++){
-            if(orderList[i].orderStatus == 1){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petPrice);
-                result = strConcat(result,",");
-                result = strConcat(result,DataProcess.getIntToString(orderList[i].orderStatus));
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
-                result = strConcat(result,",");
-
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
-            }
-        }
-        return (result, buyerAddress, sellerAddress);
-    }
-    //ç®¡ç†å‘˜æ¥å—é€€è´§ç”³è¯·
-    function acceptReturn(string _orderId) public isAdmin {
-        uint index;
-        for(uint i=0;i<orderList.length;i++) {
-            if(keccak256(_orderId) == keccak256(orderList[i].orderId)){
-                index = i;
-                break;
-            }
-        }
-        orderList[index].orderStatus = 2;
-        changePetOwner(orderList[index].orderBuyer, orderList[index].orderSeller, orderList[index].petId);
-    }
-    //ç®¡ç†å‘˜æ‹’ç»é€€è´§ç”³è¯·
-    function rejectReturn(string _orderId) public isAdmin {
-        uint index;
-        for(uint i=0;i<orderList.length;i++) {
-            if(keccak256(_orderId) == keccak256(orderList[i].orderId)){
-                index = i;
-                break;
-            }
-        }
-        orderList[index].orderStatus = 3;
-    }
-
-
-    //ç”¨æˆ·éƒ¨åˆ†ï¼š
-    //ç”¨æˆ·è·å¾—è‡ªå·±çš„è®¢å•åˆ—è¡¨
-    function userGetOrderList() public view returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
-        for(uint i = 0;i < orderList.length;i++){
-            if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petPrice);
-                result = strConcat(result,",");
-                result = strConcat(result,DataProcess.getIntToString(orderList[i].orderStatus));
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
-                result = strConcat(result,",");
-
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
-            }
-        }
-        return (result, buyerAddress, sellerAddress);
-    }
-    //ç”³è¯·é€€è´§
-    function applyForReturn(string _orderId) public {
-        uint index;
-        for(uint i=0;i<orderList.length;i++) {
-            if(keccak256(_orderId) == keccak256(orderList[i].orderId)){
-                index = i;
-                break;
-            }
-        }
-        //åˆ¤æ–­ç”³è¯·è€…ä¸ºä¹°æ–¹ä¸”è®¢å•çŠ¶æ€ä¸ºå¯é€€è´§
-        require(orderList[index].orderBuyer == msg.sender && orderList[index].orderStatus == 0);
-        orderList[index].orderStatus = 1;
-    }
+    
 }

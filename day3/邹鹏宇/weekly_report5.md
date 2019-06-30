@@ -12,7 +12,7 @@
 
 - 学习spring-boot后端开发的框架
 
-- 编写[详细设计文档](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc/项目详细设计文档 v2.docx)
+- 编写[详细设计文档](https://github.com/2019-scut-practical-training-team/webank/blob/dev/final/doc)
 
   - 需求分析
 

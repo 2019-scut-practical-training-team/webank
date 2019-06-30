@@ -9,7 +9,7 @@ import "element-ui/lib/theme-chalk/index.css";
 import axios from "axios";
 
 // 设置基础api
-axios.default.baseURL = "http://192.168.110.110:8080";
+axios.default.baseURL = "http://110.64.72.19:8080";
 // 绑定到Vue上
 Vue.prototype.$axios = axios;
 

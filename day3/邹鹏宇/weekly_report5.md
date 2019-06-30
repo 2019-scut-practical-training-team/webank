@@ -21,7 +21,7 @@
   - 部分非功能需求编写
   - 部署方案
 
-- 编写[API接口文档](<https://g3webank.postman.co/collections/6150471-3e50ab27-7828-4b22-9cf6-05e7ee83d393?version=latest&workspace=1cd9b014-5152-4f7f-bf6e-765e3810ac8e>)，并与前端开发人员讨论、确认
+- 编写[API接口文档](https://g3webank.postman.co/collections/6150471-3e50ab27-7828-4b22-9cf6-05e7ee83d393?version=latest&workspace=1cd9b014-5152-4f7f-bf6e-765e3810ac8e>)，并与前端开发人员讨论、确认
 
 - 根据上课的内容，在本地建立了一个多群组的区块链
 

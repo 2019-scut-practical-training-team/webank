@@ -96,7 +96,8 @@ export default {
   min-width: 768px;
 }
 .grid-top {
-  background-color: #9eceff;
+  background-color: rgb(64, 158, 255); // 深蓝
+  // background-color: #9eceff;  //浅蓝
   min-height: 300px;
   max-height: 500px;
   width: 100%;

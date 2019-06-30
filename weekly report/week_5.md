@@ -32,7 +32,7 @@
 
 ## 6月27日
 
-* 后端开发团队编写[API接口文档](<https://g3webank.postman.co/collections/6150471-3e50ab27-7828-4b22-9cf6-05e7ee83d393?version=latest&workspace=1cd9b014-5152-4f7f-bf6e-765e3810ac8e>)，并与前端开发人员讨论、确认
+* 后端开发团队编写[API接口文档](https://g3webank.postman.co/collections/6150471-3e50ab27-7828-4b22-9cf6-05e7ee83d393?version=latest&workspace=1cd9b014-5152-4f7f-bf6e-765e3810ac8e)，并与前端开发人员讨论、确认
 * 完成了[原型图](https://github.com/2019-scut-practical-training-team/webank/tree/dev/final/doc/原型图)的绘制
 * 开始智能合约的编写
 * 前后端代码开始开发

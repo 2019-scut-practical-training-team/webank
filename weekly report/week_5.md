@@ -58,17 +58,28 @@
 
 ## 6月29日
 
+前端：
 
+后端：
+
+* 合约相关功能进行商讨（主要是solodity语言返回结构体数组的问题）
+* 智能合约的编写
+* sdk问题的商讨
+* 后端代码开发
 
 
 
 ## 6月30日
 
+前端：
 
+后端：
 
-
-
-
+* 将代码移植到spring-boot-starter项目中，之前由于包的问题，导致不能再该项目中使用RequestMapping等相关注解，问题已解决
+* 在本地搭一个多群组的区块链
+* 将节点与和spring-boot-starter建立通信（设置相关配置文件）
+* 智能合约开发
+* 后端代码开发
 
 
 
@@ -76,3 +87,4 @@
 
 ## 工作报告
 
+* [邹鹏宇第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/邹鹏宇/weekly_report5.md)

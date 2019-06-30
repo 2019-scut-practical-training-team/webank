@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="user-page">
     <el-card class="user-info-card">
       <div slot="header">
         <span>用户信息</span>
@@ -37,7 +37,103 @@
       <div slot="header">
         <span>我的宠物</span>
       </div>
+      <div v-for="pet in petList" :key="pet.petId" class="pet-card">
+        <el-card :body-style="{ padding: '0px' }">
+          <el-image :src="pet.petImg" alt="Image" class="pet-img"></el-image>
+          <div class="pet-info">
+            <div style="font-size: 23px">{{ pet.petName }}</div>
+            <div>{{ pet.petType }}</div>
+            <div>{{ "￥" + pet.petPrice }}</div>
+            <div>{{ pet.petIntro }}</div>
+          </div>
+        </el-card>
+      </div>
+      <div class="pet-card">
+        <el-card :body-style="{ padding: '0px' }">
+          <div class="new-pet" @click="newPetDialogVisiable = true">
+            <i class="el-icon-plus new-pet-icon"></i>
+            <div class="new-pet-text">新建宠物</div>
+          </div>
+        </el-card>
+      </div>
     </el-card>
+    <el-dialog
+      title="创建新宠物"
+      :visible.sync="newPetDialogVisiable"
+      width="500px"
+      center="true"
+    >
+      <el-form :model="newPetForm">
+        <el-form-item
+          label="名称"
+          :label-width="formLabelWidth"
+          class="pet-form-item"
+        >
+          <el-input
+            v-model="newPetForm.name"
+            placeholder="请输入你的宠物的名字"
+            maxlength="6"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="类型"
+          :label-width="formLabelWidth"
+          class="pet-form-item"
+        >
+          <el-select v-model="petTypeValue" placeholder="请选择">
+            <el-option
+              v-for="petType in petTypes"
+              :key="petType"
+              :label="petType"
+              :value="petType"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="价格"
+          :label-width="formLabelWidth"
+          class="pet-form-item"
+        >
+          <el-input
+            v-model="newPetForm.price"
+            type="number"
+            onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
+            max="5000"
+            min="0"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="图片链接"
+          :label-width="formLabelWidth"
+          class="pet-form-item"
+        >
+          <el-input
+            v-model="newPetForm.img"
+            placeholder="请输入你的宠物图片的URL"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="描述"
+          :label-width="formLabelWidth"
+          class="pet-form-item"
+          style="margin-bottom: 0"
+        >
+          <el-input
+            v-model="newPetForm.intro"
+            placeholder="请输入你对该宠物的描述"
+            maxlength="14"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button type="primary" @click="newPetDialogVisiable = false"
+          >确认</el-button
+        >
+        <el-button @click="newPetDialogVisiable = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -46,6 +142,7 @@ export default {
   name: "UserInfo",
   data() {
     return {
+      newPetDialogVisiable: false,
       address: "0x123456789abcdefghi",
       balance: 5000,
       balancePercentage: 0,
@@ -60,20 +157,81 @@ export default {
           petPrice: 100,
           petName: "tom",
           petStatus: 1,
-          petImg: "www.baidu.com",
-          petIntro: "这是一只狗"
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804170123&di=1ddf8a5e1d4345013ee0cd36ad3a1ba9&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1709%2F132-1FZ2121051.jpg",
+          petIntro: "这是一只狗啊啊啊啊啊啊啊啊啊"
         },
-
         {
           petId: 2,
           petType: "猫",
           petPrice: 200,
           petName: "jerry",
           petStatus: 0,
-          petImg: "www.baidu.com",
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只猫"
+        },
+        {
+          petId: 3,
+          petType: "狗",
+          petPrice: 100,
+          petName: "tom",
+          petStatus: 1,
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804170123&di=1ddf8a5e1d4345013ee0cd36ad3a1ba9&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1709%2F132-1FZ2121051.jpg",
+          petIntro: "这是一只狗"
+        },
+        {
+          petId: 4,
+          petType: "猫",
+          petPrice: 200,
+          petName: "jerry",
+          petStatus: 0,
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只猫"
+        },
+        {
+          petId: 5,
+          petType: "狗",
+          petPrice: 100,
+          petName: "tom",
+          petStatus: 1,
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804170123&di=1ddf8a5e1d4345013ee0cd36ad3a1ba9&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1709%2F132-1FZ2121051.jpg",
+          petIntro: "这是一只狗"
+        },
+        {
+          petId: 6,
+          petType: "猫",
+          petPrice: 200,
+          petName: "jerry",
+          petStatus: 0,
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只猫"
+        },
+        {
+          petId: 7,
+          petType: "狗",
+          petPrice: 100,
+          petName: "tom",
+          petStatus: 1,
+          petImg:
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561812530148&di=d31285463da7b5651d88a19ea5a4c4f7&imgtype=0&src=http%3A%2F%2Fwww.pig66.com%2Fuploadfile%2F2018%2F0110%2F20180110102944250.jpg",
           petIntro: "这是一只狗"
         }
-      ]
+      ],
+      newPetForm: {
+        name: "",
+        type: "",
+        price: 2500,
+        img: "",
+        intro: ""
+      },
+      formLabelWidth: "80px",
+      petTypes: ["猫", "狗", "兔子", "恐龙", "鸟"],
+      petTypeValue: ""
     };
   },
   methods: {
@@ -96,20 +254,13 @@ export default {
     if (this.petCountPercentage === 100) {
       this.petCountStatus = "success";
     }
-
-    this.$axios
-      .get(this.$axios.baseURL + "/api/market/pets")
-      .then(res => {
-        window.console.log(res);
-      })
-      .catch(err => {
-        window.console.log(err);
-      });
   }
 };
 </script>
 
 <style lang="less" scoped>
+@pet-img-width: 240px;
+@pet-img-height: @pet-img-width;
 .user-info-card {
   width: 700px;
   margin-top: 50px;
@@ -118,7 +269,45 @@ export default {
   }
 }
 .pets-card {
-  margin-top: 50px;
+  margin: 100px 0;
+  padding-bottom: 30px;
   width: 900px;
+}
+.pet-card {
+  width: @pet-img-width;
+  float: left;
+  margin: 20px;
+}
+.pet-info {
+  padding: 14px;
+}
+.pet-img {
+  width: @pet-img-width;
+  height: @pet-img-height;
+  display: block;
+}
+.pet-info div {
+  font-size: 15px;
+  margin: 5px 0;
+}
+.new-pet {
+  display: flex;
+  height: 300px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.new-pet-icon {
+  transform: scale(4);
+  margin-bottom: 30px;
+}
+.new-pet-text {
+  font-size: 20px;
+  font-weight: 600;
+  user-select: none;
+}
+.pet-form-item {
+  margin-right: 30px;
 }
 </style>

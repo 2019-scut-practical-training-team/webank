@@ -45,6 +45,8 @@
 
 - 完成登录页面的开发
 - 搭建好用户页面的框架
+- 搭建好管理员页面的框架
+- 完成管理员页面中退货信息、所有交易页面的开发
 
 后端：
 
@@ -65,6 +67,8 @@
 
 - 完成用户宠物页面，并调试样式
 - 尝试使用分页功能
+- 对管理员页面中退货信息、所有交易页面进行修改完善
+- 完成管理员页面中宠物市场页面的开发
 
 后端：
 
@@ -100,3 +104,4 @@
 * [翁焕滨第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/翁焕滨/翁焕滨第五周周报.md)
 * [卢越兴第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/%E5%8D%A2%E8%B6%8A%E5%85%B4/week5_report.md)
 * [吴金泽第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/吴金泽/weekly_report5.md)
+* [秦华第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/%E7%A7%A6%E5%8D%8E/weekly_report5.md)

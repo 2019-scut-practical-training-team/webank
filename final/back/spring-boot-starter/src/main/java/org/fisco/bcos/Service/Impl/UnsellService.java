@@ -24,7 +24,7 @@ public class UnsellService implements IUnsellService {
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 
-        String contract = "16fc777b4401962f5398f82342af29e18427c077";
+        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
 
         Market market = Market.load(
                 contract,

@@ -26,7 +26,7 @@ public class RegisterService implements IRegisterService {
         String privateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
         String publicKey = credentials.getEcKeyPair().getPublicKey().toString(16);
 
-        String contract = "16fc777b4401962f5398f82342af29e18427c077";
+        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
         Market market = Market.load(
                 contract,
                 web3j,

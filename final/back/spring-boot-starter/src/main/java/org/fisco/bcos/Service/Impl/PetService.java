@@ -24,10 +24,10 @@ public class PetService implements IPetService {
         return send;
     }
     public String callShowPetOnSell() throws Exception {
-        String contract = "3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
+        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
         Market market = Market.load(contract, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
         String s = market.showPetOnSell().send();
-        // TODO
+        // TODO 格式化
         return s;
     }
 }

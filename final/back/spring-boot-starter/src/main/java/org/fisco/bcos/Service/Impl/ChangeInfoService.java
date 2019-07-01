@@ -20,14 +20,15 @@ public class ChangeInfoService implements IChangeInfoService {
     @Override
     public JSONObject changeInfo(String key, String petId, String petType, int petPrice,
                                  String petName, String petImg, String petIntro)throws Exception {
-        String contract = "185159bfdd227ee90d947cc80446297e6130b8b5";
         Credentials credentials = GenCredential.create(key);
-        Market market = Market.load(contract, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
-        market.changePetInfo(petName, petId, petType, BigInteger.valueOf(petPrice), petImg, petIntro).send();
+        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
 
-        // TODO
-        JSONObject send = new JSONObject();
-        send.put("checked", true);
-        return send;
+        Market market = Market.load(contract, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+        market.changePetInfo(petId, petName, petType, BigInteger.valueOf(petPrice), petImg, petIntro).send();
+
+
+        JSONObject object = new JSONObject();
+        object.put("checked",true);
+        return object;
     }
 }

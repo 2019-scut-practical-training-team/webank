@@ -14,10 +14,12 @@ public class SigninController {
     private ISigninService siService;
 
     @PostMapping(value = "/signin")
-    private JSONObject signin(@RequestBody String input){
+    private JSONObject signin(@RequestBody String input)throws  Exception{
         JSONObject object = JSON.parseObject(input);
         String key = object.getString("key");
+
         return siService.signin(key);
+
 
     }
 }

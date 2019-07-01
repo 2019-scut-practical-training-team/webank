@@ -1,9 +1,14 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
-import "./Market.sol";
+//import "./Market.sol";
+
+interface Market {
+    function changePetOwner(address _from, address _to, string _petId, address _caller) external;
+    function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
+}
 
 contract OrderContract is DataProcess{
-    //¶©µ¥½á¹¹Ìå
+    //è®¢å•ç»“æ„ä½“
     struct Order {
         string orderId;
         address orderBuyer;
@@ -12,153 +17,129 @@ contract OrderContract is DataProcess{
         string petId;
         uint16 petPrice;
         uint8 orderStatus;
-        string returnResult;
+        string returnReason;
     }
-    //ÉùÃ÷±äÁ¿£ºmarketºÏÔ¼µØÖ·£¬¹ÜÀíÔ±µØÖ·£¬¶©µ¥ÁĞ±í£¬¶©µ¥id
-    address marketAddress;
-    Market MK = Market(marketAddress);
+    //å£°æ˜å˜é‡ï¼šmarketåˆçº¦åœ°å€ï¼Œç®¡ç†å‘˜åœ°å€ï¼Œè®¢å•åˆ—è¡¨ï¼Œè®¢å•id
+    Market MK;
     address private adminAddress;
     Order[] public orderList;
     uint orderIdNum=1;
 
-    //¹¹Ôìº¯Êı ¹ÜÀíÔ±µØÖ·
+    
+
+    //æ„é€ å‡½æ•° è®¾ç½®ç®¡ç†å‘˜åœ°å€
     constructor() public {
         adminAddress = msg.sender;
     }
-    //ĞŞÊÎ·û£¬Éí·İÊÇ·ñ¹ÜÀíÔ±
+    //ä¿®é¥°ç¬¦ï¼Œèº«ä»½æ˜¯å¦ç®¡ç†å‘˜
     modifier isAdmin(address _caller) {
         require (_caller == adminAddress);
         _;
     }
-    //ÉèÖÃmarketºÏÔ¼µØÖ·
+    
+    
+    //å†…éƒ¨ç®¡ç†å‘˜å‡½æ•°ï¼š
+    //è®¾ç½®marketåˆçº¦åœ°å€
     function setMarketAddress(address _mkAddress) public isAdmin(msg.sender){
-        marketAddress = _mkAddress;
+        MK = Market(_mkAddress);
     }
 
 
-    //´´½¨Ò»¸öĞÂ¶©µ¥£¬marketµ÷ÓÃ
-    function createOrder(address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
-        orderList.push(Order(getIntToString(orderIdNum), _caller, _seller, _time, _petId, _petPrice, 0, ""));
+    //åˆ›å»ºä¸€ä¸ªæ–°è®¢å•ï¼Œmarketç®¡ç†å‘˜è°ƒç”¨
+    function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
+        orderList.push(Order(getIntToString(orderIdNum), _buyer, _seller, _time, _petId, _petPrice, 0, ""));
         orderIdNum++;
     }
 
 
-    //¶©µ¥Ïà¹Ø£º
-    //¹ÜÀíÔ±²¿·Ö£º
-    //·µ»ØËùÓĞ¶©µ¥£¨¹ÜÀíÔ±²é¿´
-    function adminGetOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
+    //è®¢å•ç›¸å…³ï¼š
+    //å…¬ç”¨è·å¾—è®¢å•å‡½æ•°ï¼Œä¹°æ–¹ï¼Œå–æ–¹ï¼Œç®¡ç†å‘˜å¯çœ‹
+    function getOrderById(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
+        require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
+        return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
+    }
+    
+    
+    //ç®¡ç†å‘˜éƒ¨åˆ†ï¼š
+    //è¿”å›æ‰€æœ‰è®¢å•ï¼ˆç®¡ç†å‘˜æŸ¥çœ‹
+    function adminGetOrderId() view public isAdmin(msg.sender) returns(uint[]){
+        uint[] memory temp = new uint[](orderIdNum - 1);
         for(uint i=0;i<orderList.length;i++){
-            result = strConcat(result,orderList[i].orderId);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].orderTime);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].petId);
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(uint(orderList[i].petPrice)));
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(uint(orderList[i].orderStatus)));
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].returnResult);
-            result = strConcat(result,",");
-
-            buyerAddress.push(orderList[i].orderBuyer);
-            sellerAddress.push(orderList[i].orderSeller);
+            temp[i] = i;
         }
-        return (result, buyerAddress, sellerAddress);
+        return temp;
     }
-    //¹ÜÀíÔ±»ñµÃÇëÇóÖÙ²ÃµÄ¶©µ¥
-    function adminGetReturnOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
-        for(uint i = 0;i < orderList.length;i++){
+    
+    
+    //ç®¡ç†å‘˜è·å¾—è¯·æ±‚ä»²è£çš„è®¢å•
+    function adminGetReturnOrderId() view public isAdmin(msg.sender) returns(uint[]){
+        uint count=0;
+        for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderStatus == 1){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
-                result = strConcat(result,",");
-
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
+                count++;
             }
         }
-        return (result, buyerAddress, sellerAddress);
+        uint[] memory temp = new uint[](count);
+        count=0;
+        for(i=0;i<orderList.length;i++){
+            if(orderList[i].orderStatus == 1){
+                temp[count] = i;
+                count++;
+            }
+        }
+        return temp;
     }
-    //¹ÜÀíÔ±½ÓÊÜÍË»õÉêÇë
+    
+    
+    //é€€è´§ç›¸å…³ï¼š
+    //ç®¡ç†å‘˜æ¥å—é€€è´§ç”³è¯·
     function acceptReturn(string _orderId) public isAdmin(msg.sender) {
-        uint index;
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                require(orderList[i].orderStatus==1);
+                orderList[i].orderStatus = 2;
+                MK.changePetOwner(orderList[i].orderBuyer, orderList[i].orderSeller, orderList[i].petId, adminAddress);
+                MK.payByAdmin(orderList[i].orderSeller,orderList[i].orderBuyer,orderList[i].petPrice, adminAddress);
                 break;
             }
         }
-        orderList[index].orderStatus = 2;
-        MK.changePetOwner(orderList[index].orderBuyer, orderList[index].orderSeller, orderList[index].petId, msg.sender);
-        MK.payByAdmin(orderList[index].orderBuyer,orderList[index].orderSeller,orderList[index].petPrice, msg.sender);
     }
-    //¹ÜÀíÔ±¾Ü¾øÍË»õÉêÇë
+    //ç®¡ç†å‘˜æ‹’ç»é€€è´§ç”³è¯·
     function rejectReturn(string _orderId) public isAdmin(msg.sender) {
-        uint index;
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                require(orderList[i].orderStatus==1);
+                orderList[i].orderStatus = 3;
                 break;
             }
         }
-        orderList[index].orderStatus = 3;
     }
 
 
-    //ÓÃ»§²¿·Ö£º
-    //ÓÃ»§»ñµÃ×Ô¼ºµÄ¶©µ¥ÁĞ±í
-    function userGetOrderList() public view returns (string, address[], address[]) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
+    //ç”¨æˆ·éƒ¨åˆ†ï¼š
+    //ç”¨æˆ·è·å¾—è‡ªå·±çš„è®¢å•åˆ—è¡¨
+    function userGetOrderId() public view returns(uint[]){
+        uint[] memory temp = new uint[](orderIdNum-1);
         for(uint i = 0;i < orderList.length;i++){
             if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
-                result = strConcat(result,",");
-
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
+                temp[i]=i;
             }
         }
-        return (result, buyerAddress, sellerAddress);
+        return temp;
     }
-    //ÉêÇëÍË»õ
-    function applyForReturn(string _orderId) public {
-        uint index;
+    
+    
+    //ç”³è¯·é€€è´§
+    function applyForReturn(string _orderId, string _reason) public {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                //åˆ¤æ–­ç”³è¯·è€…ä¸ºä¹°æ–¹ä¸”è®¢å•çŠ¶æ€ä¸ºå¯é€€è´§
+                require(orderList[i].orderBuyer == msg.sender && orderList[i].orderStatus == 0);
+                orderList[i].orderStatus = 1;
+                orderList[i].returnReason = _reason;
                 break;
             }
         }
-        //ÅĞ¶ÏÉêÇëÕßÎªÂò·½ÇÒ¶©µ¥×´Ì¬Îª¿ÉÍË»õ
-        require(orderList[index].orderBuyer == msg.sender && orderList[index].orderStatus == 0);
-        orderList[index].orderStatus = 1;
+        
     }
 }

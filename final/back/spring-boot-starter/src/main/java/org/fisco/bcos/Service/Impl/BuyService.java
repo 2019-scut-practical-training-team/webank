@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service(value = "buyService")
 public class BuyService implements IBuyService {
     @Override
-    public JSONObject buy(String address, String petId, int petprice, String owner) {
+    public JSONObject buy(String key, String petId) {
         JSONObject send = new JSONObject();
         return send;
     }

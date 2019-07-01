@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service(value = "checkService")
 public class CheckService implements ICheckService {
     @Override
-    public JSONObject check(String address){
+    public JSONObject check(String key){
         JSONObject send = new JSONObject();
         return send;
     }

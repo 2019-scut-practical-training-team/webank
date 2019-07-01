@@ -1,251 +1,288 @@
 pragma solidity ^0.4.25;
-import "./DataProcess.sol";
-import "./OrderContract.sol";
-
-contract Market is DataProcess{
-
-    struct Pet {
-        string petName;
-        string petId;
-        string petType;
-        uint16 petPrice;
-        uint8 petStatus;
-        string petImg;
-        string petIntro;
-        address Owner;
-    }
-    //È«¾Ö±äÁ¿ÉùÃ÷£º¹ÜÀíÔ±µØÖ·£¬orderºÏÔ¼µØÖ·£¬ÔÚÊÛ³èÎï£¬¶©µ¥ÁĞ±í
-    address private adminAddress;
-    address orderAddress;
-    OrderContract OD = OrderContract(orderAddress);
-    uint petIdNum=1;
-    Pet[] private petOnSell;
-
-
-
-    //¹¹Ôìº¯Êı,ÉèÖÃºÏÔ¼²¿ÊğÈËÎª¹ÜÀíÔ±£¬¹ÜÀíÔ±Éí·İÎª2
-    constructor() public {
-        adminAddress = msg.sender;
-        userIden[adminAddress] = 2;
-    }
-
-    //ĞŞÊÎ·û£¬ÅĞ¶ÏÉí·İÊÇ²»ÊÇ¹ÜÀíÔ±
-    modifier isAdmin(address _caller) {
-        require (_caller == adminAddress);
-        _;
-    }
-
-    //Ó³Éä£º
-    //ÅĞ¶ÏÊÇ·ñÒÑ´´½¨¹ı³èÎï
-    mapping (address => uint8) createdPet;
-    //µØÖ·ÓëÓà¶îÓ³Éä
-    mapping (address => uint) Balance;
-    //ÅĞ¶ÏÊÇ·ñÀÏÓÃ»§
-    mapping (address => uint8) oldUser;
-    //ÓÃ»§µØÖ·µ½³èÎïÁĞ±íµÄÓ³Éä
-    mapping (address => Pet[]) addressToPetList;
-    //³èÎïidµ½ÓÃ»§µØÖ·µÄÓ³Éä
-    mapping (string => address) petIdToOwner;
-    //ÓÃ»§µØÖ·ÓëÉí·İµÄÓ³Éä
-    mapping(address => uint8) userIden;
-
-
-    //ÉèÖÃorderºÏÔ¼µØÖ·£¬ÓÃÓÚµ÷ÓÃÆäÖĞµÄº¯Êı
-    function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
-        orderAddress = _orderAddress;
-    }
-
-    //ÄÚ²¿µ÷ÓÃº¯Êı£º
-    //³õÊ¼»¯ÓÃ»§Óà¶îÒÔ¼°ÊÇ·ñ´´½¨¹ı³èÎï²ÎÊı
-    function initUser() private {
-        createdPet[msg.sender] = 0;
-        Balance[msg.sender] = 10000;
-    }
+import "./DataProcess.sol";
+//import "./OrderContract.sol";
 
-    //ÉèÖÃ³èÎïÖ÷ÈË
-    function setPetOwner(string _id,address _owner) private {
-        petIdToOwner[_id] = _owner;
-    }
-
-    //Ö§¸¶¶ÔÓ¦½ğ¶î£¬ÄÚ²¿µ÷ÓÃ
-    function pay(address _from, address _to, uint16 _price) private {
-        require(_to != 0x0);
-        require(Balance[_from] >= _price);
-        require(Balance[_to] + _price > Balance[_to]); //_value²»ÄÜÎª¸ºÖµ
-        uint previousBalances = Balance[_from] + Balance[_to];
-        Balance[_from] -= _price;
-        Balance[_to] += _price;
-        assert(Balance[_from] + Balance[_to] == previousBalances);
-    }
-    //¹ÜÀíÔ±Ê¹ÓÃµÄ×ªÕËº¯Êı£¬ÓÃÓÚÍË»õ·½ÃæµÄ²Ù×÷
-    function payByAdmin(address _from,address _to, uint16 _price, address _caller) public isAdmin(_caller){
-        require(_to != 0x0);
-        require(Balance[_from] >= _price);
-        require(Balance[_to] + _price > Balance[_to]); //_value²»ÄÜÎª¸ºÖµ
-        uint previousBalances = Balance[_from] + Balance[_to];
-        Balance[_from] -= _price;
-        Balance[_to] += _price;
-        assert(Balance[_from] + Balance[_to] == previousBalances);
-    }
-    //×ª½»³èÎïËùÓĞÈ¨£¬ÓÃÓÚ¹ºÂò³èÎïºÍÍË»õÊ±Ê¹ÓÃ
-    function changePetOwner(address _from, address _to, string _petId, address _caller) public isAdmin(_caller) {
-        require(_from != 0x0);
-        require(petIdToOwner[_petId] == _from);
-        setPetOwner(_petId, _to);
-        uint petIndex;
-        //½«³èÎï´ÓÂô¼ÒµÄ³èÎïÁĞ±íÉ¾³ı£¬¼ÓÈëÂò¼ÒµÄ³èÎïÁĞ±í
-        for(uint i = 0;i < addressToPetList[_from].length;i++){
-            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[_from][i].petId))){
-                addressToPetList[_to].push(addressToPetList[_from][i]);
-                delete addressToPetList[_from][i];
-                petIndex = i;
-            }
-        }
-        //ÊÖ¶¯½«Âô¼ÒµÄ³èÎïÁĞ±íÒÆÎ»£¬²¢½«ÁĞ±í³¤¶È¼õÒ»
-        for(i = petIndex;i < addressToPetList[_from].length; i++){
-            addressToPetList[_from][i] = addressToPetList[_from][i+1];
-        }
-        delete addressToPetList[_from][addressToPetList[_from].length-1];
-        addressToPetList[_from].length--;
-    }
-
-
-
-
-    //ÓÃ»§Ïà¹Ø£º
-    //´´½¨ÓÃ»§º¯Êı£¬³õÊ¼»¯Óà¶îºÍÊÇ·ñ´´½¨¹ı³èÎï²ÎÊı
-    function createUser() public {
-        require(oldUser[msg.sender] == 0);
-        require(msg.sender != adminAddress);
-        initUser();
-        oldUser[msg.sender] = 1;
-        userIden[msg.sender] = 1;
-    }
-    //»ñÈ¡ÓÃ»§Éí·İ
-    function getUserIden() public view returns (uint8){
-        return userIden[msg.sender];
-    }
-    //»ñÈ¡µ÷ÓÃÕßµÄÓà¶î
-    function getBalanceOfMe() public view returns (uint) {
-        return Balance[msg.sender];
-    }
-    //Í¨¹ıµØÖ·»ñÈ¡Óà¶î
-    function getBalance(address _address) public view returns (uint) {
-        return Balance[_address];
-    }
-
-
-
-
-    //³èÎïÏà¹Ø£º
-    //·µ»ØÓÃ»§¶ÔÓ¦µÄ³èÎïÁĞ±í
-    function getPetListFromAddress() public view returns (string) {
-        string memory result;
-        for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            result = strConcat(result,addressToPetList[msg.sender][i].petName);
-            result = strConcat(result,",");
-            result = strConcat(result,addressToPetList[msg.sender][i].petId);
-            result = strConcat(result,",");
-            result = strConcat(result,addressToPetList[msg.sender][i].petType);
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(addressToPetList[msg.sender][i].petPrice));
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(addressToPetList[msg.sender][i].petStatus));
-            result = strConcat(result,",");
-            result = strConcat(result,addressToPetList[msg.sender][i].petImg);
-            result = strConcat(result,",");
-            result = strConcat(result,addressToPetList[msg.sender][i].petIntro);
-            result = strConcat(result,",");
-        }
-        return result;
-    }
-    //Õ¹Ê¾ËùÓĞÔÚÊÛ³èÎï
-    function showPetOnSell() public view returns(string){
-        string memory result;
-        for(uint i=0;i<petOnSell.length;i++){
-            result = strConcat(result,petOnSell[i].petName);
-            result = strConcat(result,",");
-            result = strConcat(result,petOnSell[i].petId);
-            result = strConcat(result,",");
-            result = strConcat(result,petOnSell[i].petType);
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(petOnSell[i].petPrice));
-            result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(petOnSell[i].petStatus));
-            result = strConcat(result,",");
-            result = strConcat(result,petOnSell[i].petImg);
-            result = strConcat(result,",");
-            result = strConcat(result,petOnSell[i].petIntro);
-            result = strConcat(result,",");
-        }
-        return result;
-    }
-
-    //´´½¨³èÎï£¬ÈôÃ»ÓĞ´´½¨¹ı¾ÍÏÈ´´½¨³èÎïÁĞ±íÔÙ´´½¨³èÎï
-    function createPet(string _name,  string _type, uint16 _price, string _img, string _intro) public {
-        //ÅĞ¶ÏÊÇ·ñÒÑ´´½¨¹ı³èÎï
-        require(createdPet[msg.sender] == 0);
-        createdPet[msg.sender] = 1;
-        //ÕâÀï´´½¨ÁËÒ»¸öĞÂµÄ³èÎï£¬²¢·ÅÈëÓÃ»§¶ÔÓ¦µÄ³èÎïÁĞ±í
-        addressToPetList[msg.sender].push(Pet(_name, getIntToString(petIdNum), _type, _price, 0, _img, _intro, msg.sender));
-        setPetOwner(getIntToString(petIdNum),msg.sender);
-        petIdNum++;
-    }
-    //¹ºÂò³èÎï
-    function buyPet(string _petId, uint16 _price, string _time, address _seller) public {
-        pay(msg.sender, _seller, _price);
-        changePetOwner(_seller, msg.sender, _petId, adminAddress);
-        OD.createOrder( _seller, _time, _petId, _price, adminAddress);
-    }
-
-    //³öÊÛ³èÎï
-    function sellPet(string _petId) public {
-        require(petIdToOwner[_petId] == msg.sender);
-        Pet storage tempPet;
-        for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId))){
-                addressToPetList[msg.sender][i].petStatus=1;
-                tempPet = addressToPetList[msg.sender][i];
-            }
-        }
-        petOnSell.push(tempPet);
-    }
-    //È¡Ïû³öÊÛ³èÎï
-    function cancelSellPet(string _petId) public {
-        require(petIdToOwner[_petId] == msg.sender);
-        uint index;
-        for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId))){
-                addressToPetList[msg.sender][i].petStatus=0;
-            }
-        }
-        for(i=0;i<petOnSell.length;i++){
-            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petOnSell[i].petId))){
-                delete petOnSell[i];
-                index = i;
-                break;
-            }
-        }
-        for(i=index;i<petOnSell.length-1;i++){
-            petOnSell[i] = petOnSell[i+1];
-        }
-        delete petOnSell[petOnSell.length-1];
-        petOnSell.length--;
-    }
-    //ĞŞ¸Ä³èÎïĞÅÏ¢
-    function changePetInfo(string _name, string _id, string _type, uint16 _price, string _img, string _intro) public view {
-        require(petIdToOwner[_id] == msg.sender);
-        for(uint i=0;i<addressToPetList[msg.sender].length;i++){
-            if(keccak256(abi.encodePacked(addressToPetList[msg.sender][i].petId)) == keccak256(abi.encodePacked(_id))){
-                _name = addressToPetList[msg.sender][i].petName;
-                _type = addressToPetList[msg.sender][i].petType;
-                _price = addressToPetList[msg.sender][i].petPrice;
-                _img = addressToPetList[msg.sender][i].petImg;
-                _intro = addressToPetList[msg.sender][i].petIntro;
-                break;
-            }
-        }
-    }
-    
-}
-
+interface OrderContract{
+    function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) external;
+}
+
+contract Market is DataProcess{
+    struct Pet {
+        string petName;
+        string petId;
+        string petType;
+        uint16 petPrice;
+        uint8 petStatus;
+        string petImg;
+        string petIntro;
+        address Owner;
+    }
+
+    //å…¨å±€å˜é‡å£°æ˜ï¼šç®¡ç†å‘˜åœ°å€ï¼Œorderåˆçº¦åœ°å€ï¼Œåœ¨å”®å® ç‰©ï¼Œè®¢å•åˆ—è¡¨
+    address private adminAddress;
+    OrderContract OD;
+    uint petIdNum=1;
+    Pet[] petList;
+
+
+
+
+
+    //æ„é€ å‡½æ•°,è®¾ç½®åˆçº¦éƒ¨ç½²äººä¸ºç®¡ç†å‘˜ï¼Œç®¡ç†å‘˜èº«ä»½ä¸º2
+    constructor() public {
+        adminAddress = msg.sender;
+        userIden[adminAddress] = 2;
+    }
+
+
+
+    //ä¿®é¥°ç¬¦ï¼Œåˆ¤æ–­èº«ä»½æ˜¯ä¸æ˜¯ç®¡ç†å‘˜
+    modifier isAdmin(address _caller) {
+        require (_caller == adminAddress);
+        _;
+    }
+
+
+
+    //æ˜ å°„ï¼š
+    //åˆ¤æ–­æ˜¯å¦å·²åˆ›å»ºè¿‡å® ç‰©
+    mapping (address => uint8) createdPet;
+    
+    //åœ°å€ä¸ä½™é¢æ˜ å°„
+    mapping (address => uint) Balance;
+
+    //åˆ¤æ–­æ˜¯å¦è€ç”¨æˆ·
+    mapping (address => uint8) oldUser;
+
+    //å® ç‰©idåˆ°ç”¨æˆ·åœ°å€çš„æ˜ å°„
+    mapping (string => address) petIdToOwner;
+
+    //ç”¨æˆ·åœ°å€ä¸èº«ä»½çš„æ˜ å°„,æœªæ³¨å†Œç”¨æˆ·æ˜¯0,æ™®é€šç”¨æˆ·æ˜¯1,ç®¡ç†å‘˜æ˜¯2
+    mapping(address => uint8) userIden;
+
+    function getAdmin() public view returns(address){
+        return adminAddress;
+    }
+    function getMyad() public view returns(address){
+        return msg.sender;
+    }
+
+
+
+    
+
+
+
+    //å†…éƒ¨è°ƒç”¨å‡½æ•°åŠåªæœ‰ç®¡ç†å‘˜å¯è°ƒç”¨çš„å‡½æ•°ï¼š
+    //åˆå§‹åŒ–ç”¨æˆ·ä½™é¢ä»¥åŠæ˜¯å¦åˆ›å»ºè¿‡å® ç‰©å‚æ•°
+    function initUser() private {
+        createdPet[msg.sender] = 0;
+        Balance[msg.sender] = 10000;
+    }
+
+
+    //è®¾ç½®å® ç‰©ä¸»äºº
+    function setPetOwner(string _id,address _owner) private {
+        petIdToOwner[_id] = _owner;
+    }
+    
+    //è®¾ç½®orderåˆçº¦åœ°å€ï¼Œç”¨äºè°ƒç”¨å…¶ä¸­çš„å‡½æ•°
+    function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
+        OD = OrderContract(_orderAddress);
+    }
+
+
+    //æ”¯ä»˜å¯¹åº”é‡‘é¢ï¼Œå†…éƒ¨è°ƒç”¨
+    function pay(address _from, address _to, uint16 _price) private {
+        require(_to != 0x0);
+        require(Balance[_from] >= _price);
+        require(Balance[_to] + _price > Balance[_to]);
+        uint previousBalances = Balance[_from] + Balance[_to];
+        Balance[_from] -= _price;
+        Balance[_to] += _price;
+        assert(Balance[_from] + Balance[_to] == previousBalances);
+    }
+
+    //ç®¡ç†å‘˜ä½¿ç”¨çš„è½¬è´¦å‡½æ•°ï¼Œç”¨äºé€€è´§æ–¹é¢çš„æ“ä½œ
+    function payByAdmin(address _from,address _to, uint16 _price, address _caller) public isAdmin(_caller){
+        require(_to != 0x0);
+        require(Balance[_from] >= _price);
+        require(Balance[_to] + _price > Balance[_to]);
+        uint previousBalances = Balance[_from] + Balance[_to];
+        Balance[_from] -= _price;
+        Balance[_to] += _price;
+        assert(Balance[_from] + Balance[_to] == previousBalances);
+    }
+
+    //è½¬äº¤å® ç‰©æ‰€æœ‰æƒï¼Œç”¨äºè´­ä¹°å® ç‰©å’Œé€€è´§æ—¶ä½¿ç”¨
+    function changePetOwner(address _from, address _to, string _petId, address _caller) public isAdmin(_caller) {
+        require(_from != 0x0);
+        require(petIdToOwner[_petId] == _from);
+        setPetOwner(_petId, _to);
+        for(uint i = 0;i < petList.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                petList[i].Owner=_to;
+            }
+        }
+    }
+
+
+
+
+
+
+    //ç”¨æˆ·ç›¸å…³ï¼š
+
+    //åˆ›å»ºç”¨æˆ·å‡½æ•°ï¼Œåˆå§‹åŒ–ä½™é¢å’Œæ˜¯å¦åˆ›å»ºè¿‡å® ç‰©å‚æ•°
+    function createUser() public {
+        require(oldUser[msg.sender] == 0);
+        require(msg.sender != adminAddress);
+        initUser();
+        oldUser[msg.sender] = 1;
+        userIden[msg.sender] = 1;
+    }
+
+    //è·å–ç”¨æˆ·èº«ä»½ï¼Œæœªæ³¨å†Œç”¨æˆ·æ˜¯0,æ™®é€šç”¨æˆ·æ˜¯1,ç®¡ç†å‘˜æ˜¯2
+    function getUserIden() public view returns (uint8){
+        return userIden[msg.sender];
+    }
+
+    //è·å–è°ƒç”¨è€…çš„ä½™é¢
+    function getBalanceOfMe() public view returns (uint) {
+        return Balance[msg.sender];
+    }
+
+    //é€šè¿‡åœ°å€è·å–ä½™é¢
+    function getBalance(address _address) public view returns (uint) {
+        return Balance[_address];
+    }
+
+
+
+
+
+
+
+
+
+    //å® ç‰©ç›¸å…³ï¼š
+
+    //ç”¨æˆ·æŸ¥çœ‹è‡ªå·±çš„å® ç‰©
+    function getPetListFromAddress() public view returns (string) {
+        string memory result;
+        for(uint i=0;i<petList.length;i++){
+            if(petList[i].Owner==msg.sender){
+                result = strConcat(result,petList[i].petId);
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petType);
+                result = strConcat(result,",");
+                result = strConcat(result,getIntToString(petList[i].petPrice));
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petName);
+                result = strConcat(result,",");
+                result = strConcat(result,getIntToString(petList[i].petStatus));
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petImg);
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petIntro);
+                result = strConcat(result,",");
+            }
+        }
+        return result;
+    }
+
+    //å±•ç¤ºå¸‚åœºåœ¨å”®å® ç‰©
+    function showPetOnSell() public view returns(string){
+        string memory result;
+        for(uint i=0;i<petList.length;i++){
+            if(petList[i].petStatus == 1){
+                result = strConcat(result,petList[i].petName);
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petId);
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petType);
+                result = strConcat(result,",");
+                result = strConcat(result,getIntToString(petList[i].petPrice));
+                result = strConcat(result,",");
+                result = strConcat(result,getIntToString(petList[i].petStatus));
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petImg);
+                result = strConcat(result,",");
+                result = strConcat(result,petList[i].petIntro);
+                result = strConcat(result,",");
+            }
+        }
+        return result;
+    }
+
+
+
+    //åˆ›å»ºå® ç‰©ï¼Œè‹¥æ²¡æœ‰åˆ›å»ºè¿‡å°±å…ˆåˆ›å»ºå® ç‰©åˆ—è¡¨å†åˆ›å»ºå® ç‰©
+
+    function createPet(string _type, uint16 _price, string _name,  string _img, string _intro) public {
+        //åˆ¤æ–­æ˜¯å¦å·²åˆ›å»ºè¿‡å® ç‰©
+        require(createdPet[msg.sender] == 0);
+        createdPet[msg.sender] = 1;
+        petList.push(Pet(_name, getIntToString(petIdNum), _type, _price, 0, _img, _intro, msg.sender));
+        setPetOwner(getIntToString(petIdNum),msg.sender);
+        petIdNum++;
+    }
+
+    //è´­ä¹°å® ç‰©
+
+    function buyPet(string _petId, string _time) public {
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].Owner!=msg.sender);
+                require(petList[i].petStatus==1);
+                pay(msg.sender, petList[i].Owner, petList[i].petPrice);
+                OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);
+                changePetOwner(petList[i].Owner, msg.sender, _petId, adminAddress);
+                petList[i].petStatus=0;
+            }
+        }
+    }
+
+
+
+    //å‡ºå”®å® ç‰©
+
+    function sellPet(string _petId) public {
+        require(petIdToOwner[_petId] == msg.sender);
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].petStatus==0);
+                petList[i].petStatus=1;
+                break;
+            }
+        }
+    }
+
+    //å–æ¶ˆå‡ºå”®å® ç‰©
+    function cancelSellPet(string _petId) public {
+        require(petIdToOwner[_petId] == msg.sender);
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].petStatus==1);
+                petList[i].petStatus=0;
+                break;
+            }
+        }
+    }
+
+    //ä¿®æ”¹å® ç‰©ä¿¡æ¯
+    function changePetInfo(string _id, string _name, string _type, uint16 _price, string _img, string _intro) public {
+        require(petIdToOwner[_id] == msg.sender);
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId)) == keccak256(abi.encodePacked(_id))){
+                petList[i].petName = _name;
+                petList[i].petType = _type;
+                petList[i].petPrice = _price;
+                petList[i].petImg = _img;
+                petList[i].petIntro = _intro;
+                break;
+            }
+        }
+
+    }
+}

@@ -25,7 +25,7 @@ contract OrderContract is DataProcess{
     Order[] public orderList;
     uint orderIdNum=1;
 
-
+    
 
     //构造函数 设置管理员地址
     constructor() public {
@@ -53,108 +53,82 @@ contract OrderContract is DataProcess{
 
 
     //订单相关：
+    //公用获得订单函数，买方，卖方，管理员可看
+    function getOrderById(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
+        require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
+        return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
+    }
+    
+    
     //管理员部分：
     //返回所有订单（管理员查看
-    function adminGetOrderList() public isAdmin(msg.sender) returns (string) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
+    function adminGetOrderId() view public isAdmin(msg.sender) returns(uint[]){
+        uint[] memory temp = new uint[](orderIdNum - 1);
         for(uint i=0;i<orderList.length;i++){
-            result = strConcat(result,orderList[i].orderId);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].orderTime);
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].petId);
-            result = strConcat(result,",");
-            result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
-            result = strConcat(result,",");
-            result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
-            result = strConcat(result,",");
-
-            //buyerAddress.push(orderList[i].orderBuyer);
-            //sellerAddress.push(orderList[i].orderSeller);
+            temp[i] = i;
         }
-        return (result);
+        return temp;
     }
+    
+    
     //管理员获得请求仲裁的订单
-    function adminGetReturnOrderList() public isAdmin(msg.sender) returns (string) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
-        for(uint i = 0;i < orderList.length;i++){
+    function adminGetReturnOrderId() view public isAdmin(msg.sender) returns(uint[]){
+        uint count=0;
+        for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderStatus == 1){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnReason);
-                result = strConcat(result,",");
-
-                //buyerAddress.push(orderList[i].orderBuyer);
-                //sellerAddress.push(orderList[i].orderSeller);
+                count++;
             }
         }
-        return (result);
+        uint[] memory temp = new uint[](count);
+        count=0;
+        for(i=0;i<orderList.length;i++){
+            if(orderList[i].orderStatus == 1){
+                temp[count] = i;
+                count++;
+            }
+        }
+        return temp;
     }
+    
     
     //退货相关：
     //管理员接受退货申请
     function acceptReturn(string _orderId) public isAdmin(msg.sender) {
-        uint index;
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                require(orderList[i].orderStatus==1);
+                orderList[i].orderStatus = 2;
+                MK.changePetOwner(orderList[i].orderBuyer, orderList[i].orderSeller, orderList[i].petId, adminAddress);
+                MK.payByAdmin(orderList[i].orderBuyer,orderList[i].orderSeller,orderList[i].petPrice, adminAddress);
                 break;
             }
         }
-        orderList[index].orderStatus = 2;
-        MK.changePetOwner(orderList[index].orderBuyer, orderList[index].orderSeller, orderList[index].petId, msg.sender);
-        MK.payByAdmin(orderList[index].orderBuyer,orderList[index].orderSeller,orderList[index].petPrice, msg.sender);
     }
     //管理员拒绝退货申请
     function rejectReturn(string _orderId) public isAdmin(msg.sender) {
-        uint index;
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                require(orderList[i].orderStatus==1);
+                orderList[i].orderStatus = 3;
                 break;
             }
         }
-        orderList[index].orderStatus = 3;
     }
 
 
     //用户部分：
     //用户获得自己的订单列表
-    function userGetOrderList() public view returns (string) {
-        string memory result;
-        address[] storage buyerAddress;
-        address[] storage sellerAddress;
+    function userGetOrderId() public view returns(uint[]){
+        uint[] memory temp = new uint[](orderIdNum-1);
         for(uint i = 0;i < orderList.length;i++){
             if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
-                result = strConcat(result,orderList[i].orderId);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].orderTime);
-                result = strConcat(result,",");
-                result = strConcat(result,orderList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
-                result = strConcat(result,",");
-
-                //buyerAddress.push(orderList[i].orderBuyer);
-                //sellerAddress.push(orderList[i].orderSeller);
+                temp[i]=i;
             }
         }
-        return (result);
+        return temp;
     }
+    
+    
     //申请退货
     function applyForReturn(string _orderId, string _reason) public {
         for(uint i=0;i<orderList.length;i++) {

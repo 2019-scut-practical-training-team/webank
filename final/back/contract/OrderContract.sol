@@ -1,9 +1,14 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
-import "./Market.sol";
+//import "./Market.sol";
+
+contract Market {
+    function changePetOwner(address _from, address _to, string _petId, address _caller) external;
+    function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
+}
 
 contract OrderContract is DataProcess{
-    //¶©µ¥½á¹¹Ìå
+    //è®¢å•ç»“æ„ä½“
     struct Order {
         string orderId;
         address orderBuyer;
@@ -12,40 +17,44 @@ contract OrderContract is DataProcess{
         string petId;
         uint16 petPrice;
         uint8 orderStatus;
-        string returnResult;
+        string returnReason;
     }
-    //ÉùÃ÷±äÁ¿£ºmarketºÏÔ¼µØÖ·£¬¹ÜÀíÔ±µØÖ·£¬¶©µ¥ÁĞ±í£¬¶©µ¥id
-    address marketAddress;
-    Market MK = Market(marketAddress);
+    //å£°æ˜å˜é‡ï¼šmarketåˆçº¦åœ°å€ï¼Œç®¡ç†å‘˜åœ°å€ï¼Œè®¢å•åˆ—è¡¨ï¼Œè®¢å•id
+    Market MK;
     address private adminAddress;
     Order[] public orderList;
     uint orderIdNum=1;
 
-    //¹¹Ôìº¯Êı ¹ÜÀíÔ±µØÖ·
+
+
+    //æ„é€ å‡½æ•° è®¾ç½®ç®¡ç†å‘˜åœ°å€
     constructor() public {
         adminAddress = msg.sender;
     }
-    //ĞŞÊÎ·û£¬Éí·İÊÇ·ñ¹ÜÀíÔ±
+    //ä¿®é¥°ç¬¦ï¼Œèº«ä»½æ˜¯å¦ç®¡ç†å‘˜
     modifier isAdmin(address _caller) {
         require (_caller == adminAddress);
         _;
     }
-    //ÉèÖÃmarketºÏÔ¼µØÖ·
+    
+    
+    //å†…éƒ¨ç®¡ç†å‘˜å‡½æ•°ï¼š
+    //è®¾ç½®marketåˆçº¦åœ°å€
     function setMarketAddress(address _mkAddress) public isAdmin(msg.sender){
-        marketAddress = _mkAddress;
+        MK = Market(_mkAddress);
     }
 
 
-    //´´½¨Ò»¸öĞÂ¶©µ¥£¬marketµ÷ÓÃ
-    function createOrder(address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
-        orderList.push(Order(getIntToString(orderIdNum), _caller, _seller, _time, _petId, _petPrice, 0, ""));
+    //åˆ›å»ºä¸€ä¸ªæ–°è®¢å•ï¼Œmarketç®¡ç†å‘˜è°ƒç”¨
+    function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) internal isAdmin(_caller) {
+        orderList.push(Order(getIntToString(orderIdNum), _buyer, _seller, _time, _petId, _petPrice, 0, ""));
         orderIdNum++;
     }
 
 
-    //¶©µ¥Ïà¹Ø£º
-    //¹ÜÀíÔ±²¿·Ö£º
-    //·µ»ØËùÓĞ¶©µ¥£¨¹ÜÀíÔ±²é¿´
+    //è®¢å•ç›¸å…³ï¼š
+    //ç®¡ç†å‘˜éƒ¨åˆ†ï¼š
+    //è¿”å›æ‰€æœ‰è®¢å•ï¼ˆç®¡ç†å‘˜æŸ¥çœ‹
     function adminGetOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
         string memory result;
         address[] storage buyerAddress;
@@ -57,11 +66,9 @@ contract OrderContract is DataProcess{
             result = strConcat(result,",");
             result = strConcat(result,orderList[i].petId);
             result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(uint(orderList[i].petPrice)));
+            result = strConcat(result,getIntToString(uint(orderList[i].petPrice)));
             result = strConcat(result,",");
-            result = strConcat(result,DataProcess.getIntToString(uint(orderList[i].orderStatus)));
-            result = strConcat(result,",");
-            result = strConcat(result,orderList[i].returnResult);
+            result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
             result = strConcat(result,",");
 
             buyerAddress.push(orderList[i].orderBuyer);
@@ -69,7 +76,7 @@ contract OrderContract is DataProcess{
         }
         return (result, buyerAddress, sellerAddress);
     }
-    //¹ÜÀíÔ±»ñµÃÇëÇóÖÙ²ÃµÄ¶©µ¥
+    //ç®¡ç†å‘˜è·å¾—è¯·æ±‚ä»²è£çš„è®¢å•
     function adminGetReturnOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
         string memory result;
         address[] storage buyerAddress;
@@ -86,7 +93,7 @@ contract OrderContract is DataProcess{
                 result = strConcat(result,",");
                 result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
                 result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
+                result = strConcat(result,orderList[i].returnReason);
                 result = strConcat(result,",");
 
                 buyerAddress.push(orderList[i].orderBuyer);
@@ -95,7 +102,9 @@ contract OrderContract is DataProcess{
         }
         return (result, buyerAddress, sellerAddress);
     }
-    //¹ÜÀíÔ±½ÓÊÜÍË»õÉêÇë
+    
+    //é€€è´§ç›¸å…³ï¼š
+    //ç®¡ç†å‘˜æ¥å—é€€è´§ç”³è¯·
     function acceptReturn(string _orderId) public isAdmin(msg.sender) {
         uint index;
         for(uint i=0;i<orderList.length;i++) {
@@ -108,7 +117,7 @@ contract OrderContract is DataProcess{
         MK.changePetOwner(orderList[index].orderBuyer, orderList[index].orderSeller, orderList[index].petId, msg.sender);
         MK.payByAdmin(orderList[index].orderBuyer,orderList[index].orderSeller,orderList[index].petPrice, msg.sender);
     }
-    //¹ÜÀíÔ±¾Ü¾øÍË»õÉêÇë
+    //ç®¡ç†å‘˜æ‹’ç»é€€è´§ç”³è¯·
     function rejectReturn(string _orderId) public isAdmin(msg.sender) {
         uint index;
         for(uint i=0;i<orderList.length;i++) {
@@ -121,8 +130,8 @@ contract OrderContract is DataProcess{
     }
 
 
-    //ÓÃ»§²¿·Ö£º
-    //ÓÃ»§»ñµÃ×Ô¼ºµÄ¶©µ¥ÁĞ±í
+    //ç”¨æˆ·éƒ¨åˆ†ï¼š
+    //ç”¨æˆ·è·å¾—è‡ªå·±çš„è®¢å•åˆ—è¡¨
     function userGetOrderList() public view returns (string, address[], address[]) {
         string memory result;
         address[] storage buyerAddress;
@@ -139,8 +148,6 @@ contract OrderContract is DataProcess{
                 result = strConcat(result,",");
                 result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
                 result = strConcat(result,",");
-                result = strConcat(result,orderList[i].returnResult);
-                result = strConcat(result,",");
 
                 buyerAddress.push(orderList[i].orderBuyer);
                 sellerAddress.push(orderList[i].orderSeller);
@@ -148,17 +155,17 @@ contract OrderContract is DataProcess{
         }
         return (result, buyerAddress, sellerAddress);
     }
-    //ÉêÇëÍË»õ
-    function applyForReturn(string _orderId) public {
-        uint index;
+    //ç”³è¯·é€€è´§
+    function applyForReturn(string _orderId, string _reason) public {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                index = i;
+                //åˆ¤æ–­ç”³è¯·è€…ä¸ºä¹°æ–¹ä¸”è®¢å•çŠ¶æ€ä¸ºå¯é€€è´§
+                require(orderList[i].orderBuyer == msg.sender && orderList[i].orderStatus == 0);
+                orderList[i].orderStatus = 1;
+                orderList[i].returnReason = _reason;
                 break;
             }
         }
-        //ÅĞ¶ÏÉêÇëÕßÎªÂò·½ÇÒ¶©µ¥×´Ì¬Îª¿ÉÍË»õ
-        require(orderList[index].orderBuyer == msg.sender && orderList[index].orderStatus == 0);
-        orderList[index].orderStatus = 1;
+        
     }
 }

@@ -3,14 +3,14 @@
     <el-menu
       :default-active="activeIndex"
       mode="horizontal"
-      background-color="#8CC5FF"
+      background-color="#409EFF"
       text-color="#fff"
       active-text-color="#303133"
       class="el-menu--horizontal-self"
       @select="headleSelect"
     >
       <span class="title">PetShop管理员</span>
-      <el-menu-item index="2" class="el-menu-item-self">所有交易</el-menu-item>  
+      <el-menu-item index="2" class="el-menu-item-self">所有交易</el-menu-item>
       <el-menu-item index="1" class="el-menu-item-self">宠物市场</el-menu-item>
       <el-menu-item index="0" class="el-menu-item-self">退货信息</el-menu-item>
     </el-menu>
@@ -60,10 +60,10 @@ export default {
 </script>
 
 <style scoped>
-.title{
-  font-size:30px;
-  color:white;
-  margin-left:50px;
+.title {
+  font-size: 30px;
+  color: white;
+  margin-left: 50px;
   margin-top: 8px;
 }
 

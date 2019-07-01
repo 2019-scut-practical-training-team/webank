@@ -3,13 +3,13 @@
     <div v-for="l in list" :key="l" style="margin-top:20px;">
       <el-card class="box-card">
         <div class="container">
-          <img :src="l.petImg" class="image">
+          <img :src="l.petImg" class="image" />
           <div class="text">
-            <span>价格：{{l.petPrice}}</span>
-            <span>宠物类别：{{l.petType}}</span>
-            <span>宠物ID：{{l.petId}}</span>
-            <span>介绍：{{l.perIntro}}</span>
-            <span>卖家账户：{{l.owner}}</span>
+            <span>价格：{{ l.petPrice }}</span>
+            <span>宠物类别：{{ l.petType }}</span>
+            <span>宠物ID：{{ l.petId }}</span>
+            <span>介绍：{{ l.perIntro }}</span>
+            <span>卖家账户：{{ l.owner }}</span>
           </div>
         </div>
       </el-card>

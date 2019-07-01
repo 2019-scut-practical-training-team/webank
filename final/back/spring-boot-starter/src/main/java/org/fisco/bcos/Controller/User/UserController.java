@@ -3,6 +3,7 @@ package org.fisco.bcos.Controller.User;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Bean.PetsListItem;
+import org.fisco.bcos.Service.Impl.ReturnService;
 import org.fisco.bcos.Service.Interface.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,9 @@ public class UserController {
 
     @Autowired
     private IUnsellService unsellService;
+
+    @Autowired
+    private ReturnService returnService;
 
     @RequestMapping(value = "/balance",method = RequestMethod.POST)
     private JSONObject getBalance(@RequestBody String input)throws Exception{
@@ -79,6 +83,12 @@ public class UserController {
         return checkService.check(object.getString("address"));
     }
 
+    @RequestMapping("/return")
+    public JSONObject returnOrder(@RequestBody String s) throws Exception{
+        JSONObject object = JSONObject.parseObject(s);
+        return returnService.returnOrder(object.getString("key"),object.getInteger("orderId"),object.getString("reason"));
+    }
+
 
     @RequestMapping(value = "/pet/createpet",method = RequestMethod.POST)
     private JSONObject createPet(@RequestBody String input)throws Exception{
@@ -107,9 +117,10 @@ public class UserController {
     @RequestMapping(value = "/pet/unsell",method = RequestMethod.POST)
     private JSONObject unsell(@RequestBody String input)throws Exception{
         JSONObject object = JSON.parseObject(input);
-        String address = object.getString("address");
+        String address = object.getString("key");
         int petId = object.getInteger("petId");
         return unsellService.unsell(address,petId);
     }
+
 
 }

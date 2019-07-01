@@ -12,6 +12,8 @@ import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+
 @Service
 public class SellService implements ISellService {
 
@@ -32,6 +34,9 @@ public class SellService implements ISellService {
                 credentials,
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+
+
+        market.sellPet(String.valueOf(petId)).send();
 
 
         JSONObject object = new JSONObject();

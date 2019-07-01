@@ -99,3 +99,4 @@
 * [邹鹏宇第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/邹鹏宇/weekly_report5.md)
 * [翁焕滨第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/翁焕滨/翁焕滨第五周周报.md)
 * [卢越兴第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/%E5%8D%A2%E8%B6%8A%E5%85%B4/week5_report.md)
+* [吴金泽第五周工作报告](https://github.com/2019-scut-practical-training-team/webank/blob/dev/day3/吴金泽/weekly_report5.md)

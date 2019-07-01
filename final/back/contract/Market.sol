@@ -233,9 +233,12 @@ contract Market is DataProcess{
     function buyPet(string _petId, string _time) public {
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].Owner!=msg.sender);
+                require(petList[i].petStatus==1);
                 pay(msg.sender, petList[i].Owner, petList[i].petPrice);
-                changePetOwner(petList[i].Owner, msg.sender, _petId, adminAddress);
                 OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);
+                changePetOwner(petList[i].Owner, msg.sender, _petId, adminAddress);
+                petList[i].petStatus=0;
             }
         }
     }
@@ -248,6 +251,7 @@ contract Market is DataProcess{
         require(petIdToOwner[_petId] == msg.sender);
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].petStatus==0);
                 petList[i].petStatus=1;
                 break;
             }
@@ -259,6 +263,7 @@ contract Market is DataProcess{
         require(petIdToOwner[_petId] == msg.sender);
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                require(petList[i].petStatus==1);
                 petList[i].petStatus=0;
                 break;
             }

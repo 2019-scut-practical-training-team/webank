@@ -19,10 +19,7 @@ public class RegisterService implements IRegisterService {
 
     private Web3j web3j;
     @Override
-    public JSONObject register() {
-        JSONObject object = new JSONObject();
-
-
+    public JSONObject register()  throws Exception{
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create();
         String address = credentials.getAddress();
@@ -37,11 +34,20 @@ public class RegisterService implements IRegisterService {
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
+        JSONObject object = new JSONObject();
 
-        market.createUser();
+        try {
+            market.createUser().send();
 
-        object.put("checked",true);
-        object.put("key",privateKey);
-        return object;
+            object.put("checked", true);
+            object.put("key", privateKey);
+            return object;
+        }
+        catch (Exception e){
+            System.out.println("Register failed!");
+            object.put("checked", false);
+            object.put("key", "none");
+            return object;
+        }
     }
 }

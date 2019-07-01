@@ -2,19 +2,46 @@ package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Bean.PetsListItem;
+import org.fisco.bcos.Contracts.Market;
 import org.fisco.bcos.Service.Interface.IPetlistService;
+import org.fisco.bcos.constants.GasConstants;
+import org.fisco.bcos.web3j.crypto.Credentials;
+import org.fisco.bcos.web3j.crypto.EncryptType;
+import org.fisco.bcos.web3j.crypto.gm.GenCredential;
+import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PetlistService implements IPetlistService {
 
+
+    @Autowired
+    private Web3j web3j;
+
+
     @Override
-    public JSONObject getPetlist(String address) {
+    public JSONObject getPetlist(String key) throws Exception{
+
+        EncryptType.encryptType = 0;
+        Credentials credentials = GenCredential.create(key);
+
+        String contract = "16fc777b4401962f5398f82342af29e18427c077";
+
+        Market market = Market.load(
+                contract,
+                web3j,
+                credentials,
+                new StaticGasProvider(
+                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+
+        String s = market.getPetListFromAddress().send();
+        System.out.println(s);
+
+
         JSONObject object = new JSONObject();
-        PetsListItem[] list = new PetsListItem[2];
-        list[0] = new PetsListItem(1,"仓鼠",200,"米粒",0,"www.abc.com","这是一个仓鼠");
-        list[1] = new PetsListItem(2,"蜘蛛",600,"黑寡妇",1,"www.abc.com","这是一个大蜘蛛");
-        object.put("petsList",list);
+        object.put("petsList",s);
         return object;
     }
 }

@@ -27,23 +27,15 @@ public class RegisterController {
 
     @RequestMapping(value = "register")
     private JSONObject register(){
-//        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
-//        Service service = context.getBean(Service.class);
-//        ChannelEthereumService channelEthereumService = new ChannelEthereumService();
-//        channelEthereumService.setChannelService(service);
-//
-//        //获取Web3j对象
-//        Web3j web3j = Web3j.build(channelEthereumService, service.getGroupId());
-//        //通过Web3j对象调用API接口getBlockNumber
-//        BigInteger blockNumber;
-//        try {
-//            blockNumber = web3j.getBlockNumber().send().getBlockNumber();
-//            System.out.println(blockNumber);
-//        }
-//        catch(Exception e){
-//            System.out.println("Get Blocknumber failed.");
-//        }
+        JSONObject object = new JSONObject();
 
-        return registerService.register();
+        try {
+            return registerService.register();
+        }
+        catch (Exception e){
+            object.put("checked", false);
+            object.put("key", "none");
+            return object;
+        }
     }
 }

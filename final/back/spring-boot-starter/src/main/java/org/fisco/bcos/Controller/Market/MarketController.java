@@ -33,7 +33,7 @@ public class MarketController {
     @RequestMapping("/refund")
     public JSONObject refund(@RequestBody String s) {
         JSONObject object = JSONObject.parseObject(s);
-        return refundService.refund(object.getString("orderId"), object.getInteger("orderStatus"));
+        return refundService.refund(object.getString("orderId"));
     }
 
     @RequestMapping("/pets")

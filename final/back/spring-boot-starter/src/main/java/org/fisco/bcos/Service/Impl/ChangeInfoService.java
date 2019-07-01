@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service(value = "changeInfoService")
 public class ChangeInfoService implements IChangeInfoService {
     @Override
-    public JSONObject changeInfo(String address, String petId, String petType, int petPrice,
+    public JSONObject changeInfo(String key, String petId, String petType, int petPrice,
                                  String petName, String petImg, String petIntro){
         JSONObject send = new JSONObject();
         return send;

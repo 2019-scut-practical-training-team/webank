@@ -49,22 +49,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/buy",method = RequestMethod.POST)
-    private JSONObject refund(@RequestBody String s) throws Exception{
+    private JSONObject buy(@RequestBody String s) throws Exception{
         JSONObject object = JSONObject.parseObject(s);
-        String address = object.getString("address");
+        String key = object.getString("key");
+        String petId = object.getString("petId");
 
-        JSONObject subJson = object.getJSONObject("pet");
-        String petId = subJson.getString("petId");
-        int petPrice = subJson.getInteger("petPrice");
-        String owner = subJson.getString("owner");
-
-        return buyService.buy(address, petId, petPrice, owner);
+        return buyService.buy(key, petId);
     }
 
     @RequestMapping("/pet/changeinfo")
     public JSONObject changeInfo(@RequestBody String s) throws Exception{
         JSONObject object = JSONObject.parseObject(s);
-        String address = object.getString("address");
+        String address = object.getString("key");
 
         JSONObject subJson = object.getJSONObject("pet");
         String petId = subJson.getString("petId");
@@ -80,7 +76,7 @@ public class UserController {
     @RequestMapping("/order/check")
     public JSONObject check(@RequestBody String s) throws Exception{
         JSONObject object = JSONObject.parseObject(s);
-        return checkService.check(object.getString("address"));
+        return checkService.check(object.getString("key"));
     }
 
     @RequestMapping("/return")

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service(value = "refundService")
 public class RefundService implements IRefundService {
     @Override
-    public JSONObject refund(String orderid, int orderstatus){
+    public JSONObject refund(String orderid){
         JSONObject send = new JSONObject();
         return send;
     }

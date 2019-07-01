@@ -16,7 +16,7 @@
             :stroke-width="22"
             :percentage="balancePercentage"
             :format="myBalance"
-            :status="balanceStatus"
+            :status="balancePercentage === 100 ? 'success': null"
           ></el-progress>
         </el-col>
       </el-row>
@@ -28,7 +28,7 @@
             :stroke-width="22"
             :percentage="petCountPercentage"
             :format="myPetCount"
-            :status="petCountStatus"
+            :status="petCountPercentage === 100 ? 'success': null"
           ></el-progress>
         </el-col>
       </el-row>
@@ -57,18 +57,9 @@
         </el-card>
       </div>
     </el-card>
-    <el-dialog
-      title="创建新宠物"
-      :visible.sync="newPetDialogVisiable"
-      width="500px"
-      center="true"
-    >
-      <el-form :model="newPetForm">
-        <el-form-item
-          label="名称"
-          :label-width="formLabelWidth"
-          class="pet-form-item"
-        >
+    <el-dialog title="创建新宠物" :visible.sync="newPetDialogVisiable" width="500px" center>
+      <el-form :model="newPetForm" :rules="rules" ref="newPetForm">
+        <el-form-item label="名称" :label-width="formLabelWidth" class="pet-form-item" prop="name">
           <el-input
             v-model="newPetForm.name"
             placeholder="请输入你的宠物的名字"
@@ -76,27 +67,14 @@
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item
-          label="类型"
-          :label-width="formLabelWidth"
-          class="pet-form-item"
-        >
-          <el-select v-model="petTypeValue" placeholder="请选择">
-            <el-option
-              v-for="petType in petTypes"
-              :key="petType"
-              :label="petType"
-              :value="petType"
-            ></el-option>
+        <el-form-item label="类型" :label-width="formLabelWidth" class="pet-form-item" prop="type">
+          <el-select v-model="newPetForm.type" placeholder="请选择">
+            <el-option v-for="petType in petTypes" :key="petType" :label="petType" :value="petType"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="价格"
-          :label-width="formLabelWidth"
-          class="pet-form-item"
-        >
+        <el-form-item label="价格" :label-width="formLabelWidth" class="pet-form-item" prop="price">
           <el-input
-            v-model="newPetForm.price"
+            v-model.number="newPetForm.price"
             type="number"
             onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
             max="5000"
@@ -107,17 +85,16 @@
           label="图片链接"
           :label-width="formLabelWidth"
           class="pet-form-item"
+          prop="imgURL"
         >
-          <el-input
-            v-model="newPetForm.img"
-            placeholder="请输入你的宠物图片的URL"
-          ></el-input>
+          <el-input v-model="newPetForm.imgURL" placeholder="请输入你的宠物图片的URL"></el-input>
         </el-form-item>
         <el-form-item
           label="描述"
           :label-width="formLabelWidth"
           class="pet-form-item"
           style="margin-bottom: 0"
+          prop="intro"
         >
           <el-input
             v-model="newPetForm.intro"
@@ -128,9 +105,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button type="primary" @click="newPetDialogVisiable = false"
-          >确认</el-button
-        >
+        <el-button type="primary" @click="submitNewPetForm('newPetForm')">确认</el-button>
         <el-button @click="newPetDialogVisiable = false">取消</el-button>
       </span>
     </el-dialog>
@@ -141,10 +116,21 @@
 export default {
   name: "UserInfo",
   data() {
+    var validatePrice = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入宠物的价格"));
+      } else {
+        if (value < 0 || value > 5000) {
+          callback(new Error("请输入0 ~ 5000之间的数字"));
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       newPetDialogVisiable: false,
       address: "0x123456789abcdefghi",
-      balance: 5000,
+      balance: 5000 ,
       balancePercentage: 0,
       balanceStatus: "",
       petCount: 10,
@@ -226,12 +212,26 @@ export default {
         name: "",
         type: "",
         price: 2500,
-        img: "",
+        imgURL: "",
         intro: ""
       },
       formLabelWidth: "80px",
       petTypes: ["猫", "狗", "兔子", "恐龙", "鸟"],
-      petTypeValue: ""
+      rules: {
+        name: [
+          { required: true, message: "请输入宠物的名称", trigger: "blur" }
+        ],
+        type: [
+          { required: true, message: "请选择宠物的类型", trigger: "blur" }
+        ],
+        price: [{ required: true, validator: validatePrice, trigger: "blur" }],
+        imgURL: [
+          { required: true, message: "请输入宠物图片的链接", trigger: "blur" }
+        ],
+        intro: [
+          { required: true, message: "请输入对宠物的描述", trigger: "blur" }
+        ]
+      }
     };
   },
   methods: {
@@ -240,20 +240,31 @@ export default {
     },
     myPetCount() {
       return "" + this.petCount;
+    },
+    submitNewPetForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$message({
+            message: "提交成功",
+            type: "success"
+          });
+          // 关闭窗口
+          this.newPetDialogVisiable = false;
+          // 重置为初始化状态
+          this.$refs[formName].resetFields();
+        } else {
+          window.console.log("error submit");
+          return false;
+        }
+      });
     }
   },
   created() {
     this.balancePercentage =
       this.balance / 500 > 100 ? 100 : this.balance / 500;
-    if (this.balancePercentage === 100) {
-      this.balanceStatus = "success";
-    }
 
     this.petCountPercentage =
       this.petCount / 0.2 > 100 ? 100 : this.petCount / 0.2;
-    if (this.petCountPercentage === 100) {
-      this.petCountStatus = "success";
-    }
   }
 };
 </script>

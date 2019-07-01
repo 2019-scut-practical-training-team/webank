@@ -26,23 +26,23 @@ public class MarketController {
     private IRefundListService refundListService ;
 
     @RequestMapping("/refundlist")
-    public JSONObject refundList() {
+    public JSONObject refundList()throws Exception  {
         return refundListService.refundList();
     }
 
     @RequestMapping("/refund")
-    public JSONObject refund(@RequestBody String s) {
+    public JSONObject refund(@RequestBody String s) throws Exception {
         JSONObject object = JSONObject.parseObject(s);
         return refundService.refund(object.getString("orderId"));
     }
 
     @RequestMapping("/pets")
-    public JSONObject pets() {
+    public JSONObject pets() throws Exception {
         return petsService.pets();
     }
 
     @RequestMapping("/orders")
-    public JSONObject orders() {
+    public JSONObject orders()throws Exception  {
         return ordersService.orders();
     }
 }

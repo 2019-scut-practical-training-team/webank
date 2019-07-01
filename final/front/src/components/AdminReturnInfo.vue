@@ -12,8 +12,7 @@
           <div class="text">
             <span>交易价格：{{ l.perPrice }}</span>
             <span>卖家账户：{{ l.orderSeller }}</span>
-            <span v-if="l.orderStatus == 1">是否退货中：是</span>
-            <span v-if="l.orderStatus == 0">是否退货中：否</span>
+            <span v-if="l.orderStatus == 1">退货理由：{{l.reason}}</span>
           </div>
           <el-button
             type="primary"
@@ -51,7 +50,8 @@ export default {
           orderTime: "yyyy-MM-dd HH:mm:ss",
           petId: 1,
           petPrice: 2000,
-          orderStatus: 1
+          orderStatus: 1,
+          reason:"不要了"
         },
         {
           orderId: 2,
@@ -60,7 +60,8 @@ export default {
           orderTime: "yyyy-MM-dd HH:mm:ss",
           petId: 1,
           petPrice: 2000,
-          orderStatus: 1
+          orderStatus: 1,
+          reason:"不要了"
         },
         {
           orderId: 3,
@@ -69,7 +70,8 @@ export default {
           orderTime: "yyyy-MM-dd HH:mm:ss",
           petId: 1,
           petPrice: 2000,
-          orderStatus: 1
+          orderStatus: 1,
+          reason:"不要了"
         }
       ]
     };

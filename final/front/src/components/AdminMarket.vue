@@ -1,20 +1,23 @@
 <template>
+<div class="all">
   <div class="tranContainer">
     <div v-for="l in list" :key="l" style="margin-top:20px;">
       <el-card class="box-card">
         <div class="container">
           <img :src="l.petImg" class="image" />
           <div class="text">
+            <span >名字：{{ l.petName }}</span>
             <span>价格：{{ l.petPrice }}</span>
             <span>宠物类别：{{ l.petType }}</span>
             <span>宠物ID：{{ l.petId }}</span>
-            <span>介绍：{{ l.perIntro }}</span>
+            <span>介绍：{{ l.petIntro}}</span>
             <span>卖家账户：{{ l.owner }}</span>
           </div>
         </div>
       </el-card>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -29,8 +32,8 @@ export default {
           petPrice: 100,
           petName: "tom",
           petImg:
-            "https://raw.githubusercontent.com/2019-scut-practical-training-team/webank/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png",
-          petIntro: "这是一只狗",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只狗狗狗狗狗狗狗狗",
           owner: "0x123"
         },
         {
@@ -39,8 +42,8 @@ export default {
           petPrice: 100,
           petName: "tom",
           petImg:
-            "https://raw.githubusercontent.com/2019-scut-practical-training-team/webank/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png",
-          petIntro: "这是一只狗",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只狗狗狗狗狗狗狗狗",
           owner: "0x123"
         },
         {
@@ -49,8 +52,8 @@ export default {
           petPrice: 100,
           petName: "tom",
           petImg:
-            "https://raw.githubusercontent.com/2019-scut-practical-training-team/webank/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png",
-          petIntro: "这是一只狗",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只狗狗狗狗狗狗狗狗",
           owner: "0x123"
         },
         {
@@ -59,8 +62,8 @@ export default {
           petPrice: 100,
           petName: "tom",
           petImg:
-            "https://raw.githubusercontent.com/2019-scut-practical-training-team/webank/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png",
-          petIntro: "这是一只狗",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只狗狗狗狗狗狗狗狗",
           owner: "0x123"
         },
         {
@@ -69,8 +72,8 @@ export default {
           petPrice: 100,
           petName: "tom",
           petImg:
-            "https://raw.githubusercontent.com/2019-scut-practical-training-team/webank/master/day1/%E7%A7%A6%E5%8D%8E/image/1.png",
-          petIntro: "这是一只狗",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
+          petIntro: "这是一只狗狗狗狗狗狗狗狗",
           owner: "0x123"
         }
       ]
@@ -81,13 +84,13 @@ export default {
 
 <style scoped>
 .image {
-  width: 260px;
+  width: 240px;
   height: 200px;
 }
 
 .box-card {
-  width: 300px;
-  height: 360px;
+  width: 280px;
+  height: 370px;
   margin-left: 40px;
 }
 
@@ -109,5 +112,12 @@ export default {
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.all{
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  margin-left: 5%;
 }
 </style>

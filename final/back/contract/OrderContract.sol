@@ -99,7 +99,7 @@ contract OrderContract is DataProcess{
                 require(orderList[i].orderStatus==1);
                 orderList[i].orderStatus = 2;
                 MK.changePetOwner(orderList[i].orderBuyer, orderList[i].orderSeller, orderList[i].petId, adminAddress);
-                MK.payByAdmin(orderList[i].orderBuyer,orderList[i].orderSeller,orderList[i].petPrice, adminAddress);
+                MK.payByAdmin(orderList[i].orderSeller,orderList[i].orderBuyer,orderList[i].petPrice, adminAddress);
                 break;
             }
         }

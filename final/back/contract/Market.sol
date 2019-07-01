@@ -236,9 +236,9 @@ contract Market is DataProcess{
                 require(petList[i].Owner!=msg.sender);
                 require(petList[i].petStatus==1);
                 pay(msg.sender, petList[i].Owner, petList[i].petPrice);
+                OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);
                 changePetOwner(petList[i].Owner, msg.sender, _petId, adminAddress);
                 petList[i].petStatus=0;
-                OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);
             }
         }
     }

@@ -2,7 +2,7 @@ pragma solidity ^0.4.25;
 import "./DataProcess.sol";
 //import "./Market.sol";
 
-contract Market {
+interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
     function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
 }
@@ -46,7 +46,7 @@ contract OrderContract is DataProcess{
 
 
     //创建一个新订单，market管理员调用
-    function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) internal isAdmin(_caller) {
+    function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
         orderList.push(Order(getIntToString(orderIdNum), _buyer, _seller, _time, _petId, _petPrice, 0, ""));
         orderIdNum++;
     }
@@ -55,7 +55,7 @@ contract OrderContract is DataProcess{
     //订单相关：
     //管理员部分：
     //返回所有订单（管理员查看
-    function adminGetOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
+    function adminGetOrderList() public isAdmin(msg.sender) returns (string) {
         string memory result;
         address[] storage buyerAddress;
         address[] storage sellerAddress;
@@ -71,13 +71,13 @@ contract OrderContract is DataProcess{
             result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
             result = strConcat(result,",");
 
-            buyerAddress.push(orderList[i].orderBuyer);
-            sellerAddress.push(orderList[i].orderSeller);
+            //buyerAddress.push(orderList[i].orderBuyer);
+            //sellerAddress.push(orderList[i].orderSeller);
         }
-        return (result, buyerAddress, sellerAddress);
+        return (result);
     }
     //管理员获得请求仲裁的订单
-    function adminGetReturnOrderList() public isAdmin(msg.sender) returns (string, address[], address[]) {
+    function adminGetReturnOrderList() public isAdmin(msg.sender) returns (string) {
         string memory result;
         address[] storage buyerAddress;
         address[] storage sellerAddress;
@@ -96,11 +96,11 @@ contract OrderContract is DataProcess{
                 result = strConcat(result,orderList[i].returnReason);
                 result = strConcat(result,",");
 
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
+                //buyerAddress.push(orderList[i].orderBuyer);
+                //sellerAddress.push(orderList[i].orderSeller);
             }
         }
-        return (result, buyerAddress, sellerAddress);
+        return (result);
     }
     
     //退货相关：
@@ -132,7 +132,7 @@ contract OrderContract is DataProcess{
 
     //用户部分：
     //用户获得自己的订单列表
-    function userGetOrderList() public view returns (string, address[], address[]) {
+    function userGetOrderList() public view returns (string) {
         string memory result;
         address[] storage buyerAddress;
         address[] storage sellerAddress;
@@ -149,11 +149,11 @@ contract OrderContract is DataProcess{
                 result = strConcat(result,getIntToString(uint(orderList[i].orderStatus)));
                 result = strConcat(result,",");
 
-                buyerAddress.push(orderList[i].orderBuyer);
-                sellerAddress.push(orderList[i].orderSeller);
+                //buyerAddress.push(orderList[i].orderBuyer);
+                //sellerAddress.push(orderList[i].orderSeller);
             }
         }
-        return (result, buyerAddress, sellerAddress);
+        return (result);
     }
     //申请退货
     function applyForReturn(string _orderId, string _reason) public {

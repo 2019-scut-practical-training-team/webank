@@ -2,7 +2,7 @@ pragma solidity ^0.4.25;
 import "./DataProcess.sol";
 //import "./OrderContract.sol";
 
-contract OrderContract{
+interface OrderContract{
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) external;
 }
 
@@ -20,8 +20,7 @@ contract Market is DataProcess{
 
     //全局变量声明：管理员地址，order合约地址，在售宠物，订单列表
     address private adminAddress;
-    address orderAddress;
-    OrderContract OD = OrderContract(orderAddress);
+    OrderContract OD;
     uint petIdNum=1;
     Pet[] petList;
 
@@ -89,7 +88,7 @@ contract Market is DataProcess{
     
     //设置order合约地址，用于调用其中的函数
     function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
-        orderAddress = _orderAddress;
+        OD = OrderContract(_orderAddress);
     }
 
 
@@ -105,7 +104,7 @@ contract Market is DataProcess{
     }
 
     //管理员使用的转账函数，用于退货方面的操作
-    function payByAdmin(address _from,address _to, uint16 _price, address _caller) internal isAdmin(_caller){
+    function payByAdmin(address _from,address _to, uint16 _price, address _caller) public isAdmin(_caller){
         require(_to != 0x0);
         require(Balance[_from] >= _price);
         require(Balance[_to] + _price > Balance[_to]);
@@ -116,7 +115,7 @@ contract Market is DataProcess{
     }
 
     //转交宠物所有权，用于购买宠物和退货时使用
-    function changePetOwner(address _from, address _to, string _petId, address _caller) internal isAdmin(_caller) {
+    function changePetOwner(address _from, address _to, string _petId, address _caller) public isAdmin(_caller) {
         require(_from != 0x0);
         require(petIdToOwner[_petId] == _from);
         setPetOwner(_petId, _to);

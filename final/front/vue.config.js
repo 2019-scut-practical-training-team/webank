@@ -1,6 +1,6 @@
 module.exports = {
   devServer: {
-    // public: "110.64.87.91:8080",
-    // disableHostCheck: true
+    public: "192.168.1.126:8080",
+    disableHostCheck: true
   }
 };

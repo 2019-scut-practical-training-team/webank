@@ -23,7 +23,7 @@ export default {
   name: "UserPage",
   data() {
     return {
-      activeIndex: "0"
+      activeIndex: "1"
     };
   },
   components: {

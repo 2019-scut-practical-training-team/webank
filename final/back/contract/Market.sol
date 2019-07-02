@@ -27,7 +27,6 @@ contract Market is DataProcess{
 
 
 
-
     //构造函数,设置合约部署人为管理员，管理员身份为2
     constructor() public {
         adminAddress = msg.sender;
@@ -60,16 +59,6 @@ contract Market is DataProcess{
     //用户地址与身份的映射,未注册用户是0,普通用户是1,管理员是2
     mapping(address => uint8) userIden;
 
-    function getAdmin() public view returns(address){
-        return adminAddress;
-    }
-    function getMyad() public view returns(address){
-        return msg.sender;
-    }
-
-
-
-    
 
 
 
@@ -125,18 +114,26 @@ contract Market is DataProcess{
             }
         }
     }
+    function getPetOwner(string _petId) public view returns(address){
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                return petList[i].Owner;
+            }
+        }
+    }
 
 
 
 
 
-
+    //外部可以调用的函数：
+    
     //用户相关：
 
     //创建用户函数，初始化余额和是否创建过宠物参数
     function createUser() public {
-        require(oldUser[msg.sender] == 0);
-        require(msg.sender != adminAddress);
+        require(oldUser[msg.sender] == 0,"You are old user!");
+        require(msg.sender != adminAddress, "You are administrator, you have account!");
         initUser();
         oldUser[msg.sender] = 1;
         userIden[msg.sender] = 1;
@@ -162,66 +159,62 @@ contract Market is DataProcess{
 
 
 
-
-
-
     //宠物相关：
+    //输入 宠物下标
+    //返回 id，类型， 价格， 名字， 宠物上架状态， 宠物图片， 宠物介绍
+    function getPetByIndex(uint _index) public view returns (string, string, uint16, string,  uint8, string, string){
+        require(_index<=petList.length-1, "This index is out of range!");
+        require(msg.sender==petList[_index].Owner || petList[_index].petStatus==1, "You can not see information about this pet!");
+        return (petList[_index].petId,petList[_index].petType,petList[_index].petPrice, petList[_index].petName, petList[_index].petStatus,petList[_index].petImg,petList[_index].petIntro);
+    }
 
     //用户查看自己的宠物
-    function getPetListFromAddress() public view returns (string) {
-        string memory result;
+    //返回宠物下标数组
+    function getPetIndex() public view returns (uint[]) {
+        uint count=0;
         for(uint i=0;i<petList.length;i++){
             if(petList[i].Owner==msg.sender){
-                result = strConcat(result,petList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petType);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(petList[i].petPrice));
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petName);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(petList[i].petStatus));
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petImg);
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petIntro);
-                result = strConcat(result,",");
+                count++;
             }
         }
-        return result;
+        uint[] memory temp = new uint[](count);
+        count=0;
+        for(i=0;i<petList.length;i++){
+            if(petList[i].Owner==msg.sender){
+                temp[count]=i;
+                count++;
+            }
+        }
+        return temp;
     }
 
     //展示市场在售宠物
-    function showPetOnSell() public view returns(string){
-        string memory result;
+    //返回宠物下标数组
+    function showPetOnSell() public view returns(uint[]){
+        uint count=0;
         for(uint i=0;i<petList.length;i++){
-            if(petList[i].petStatus == 1){
-                result = strConcat(result,petList[i].petName);
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petId);
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petType);
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(petList[i].petPrice));
-                result = strConcat(result,",");
-                result = strConcat(result,getIntToString(petList[i].petStatus));
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petImg);
-                result = strConcat(result,",");
-                result = strConcat(result,petList[i].petIntro);
-                result = strConcat(result,",");
+            if(petList[i].petStatus==1){
+                count++;
             }
         }
-        return result;
+        uint[] memory temp = new uint[](count);
+        count=0;
+        for(i=0;i<petList.length;i++){
+            if(petList[i].petStatus==1){
+                temp[count]=i;
+                count++;
+            }
+        }
+        return temp;
     }
 
 
 
-    //创建宠物，若没有创建过就先创建宠物列表再创建宠物
-
+    //创建宠物
+    //输入 宠物类型，价格，名字，图片，介绍
     function createPet(string _type, uint16 _price, string _name,  string _img, string _intro) public {
         //判断是否已创建过宠物
-        require(createdPet[msg.sender] == 0);
+        require(createdPet[msg.sender] == 0, "You have alredy created a pet!");
         createdPet[msg.sender] = 1;
         petList.push(Pet(_name, getIntToString(petIdNum), _type, _price, 0, _img, _intro, msg.sender));
         setPetOwner(getIntToString(petIdNum),msg.sender);
@@ -229,60 +222,59 @@ contract Market is DataProcess{
     }
 
     //购买宠物
-
-    function buyPet(string _petId, string _time) public {
+    //输入 宠物id，时间
+    function buyPet(string _petId, string _time) public{
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
-                require(petList[i].Owner!=msg.sender);
-                require(petList[i].petStatus==1);
+                //判断宠物是否在售
+                require(petList[i].petStatus==1, "This pet is not on sell!");
                 pay(msg.sender, petList[i].Owner, petList[i].petPrice);
                 OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);
                 changePetOwner(petList[i].Owner, msg.sender, _petId, adminAddress);
                 petList[i].petStatus=0;
+                break;
             }
         }
+        
     }
 
 
 
     //出售宠物
-
+    //输入 宠物id
     function sellPet(string _petId) public {
-        require(petIdToOwner[_petId] == msg.sender);
+        require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
-                require(petList[i].petStatus==0);
+                require(petList[i].petStatus==0, "This pet is on sell!");
                 petList[i].petStatus=1;
-                break;
             }
         }
     }
 
     //取消出售宠物
     function cancelSellPet(string _petId) public {
-        require(petIdToOwner[_petId] == msg.sender);
+        require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
-                require(petList[i].petStatus==1);
+                require(petList[i].petStatus==1, "This pet is not on sell!");
                 petList[i].petStatus=0;
-                break;
             }
         }
     }
 
     //修改宠物信息
-    function changePetInfo(string _id, string _name, string _type, uint16 _price, string _img, string _intro) public {
-        require(petIdToOwner[_id] == msg.sender);
+    function changePetInfo(string _petId, string _name, string _type, uint16 _price, string _img, string _intro) public {
+        require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
         for(uint i=0;i<petList.length;i++){
-            if(keccak256(abi.encodePacked(petList[i].petId)) == keccak256(abi.encodePacked(_id))){
+            if(keccak256(abi.encodePacked(petList[i].petId)) == keccak256(abi.encodePacked(_petId))){
                 petList[i].petName = _name;
                 petList[i].petType = _type;
                 petList[i].petPrice = _price;
                 petList[i].petImg = _img;
                 petList[i].petIntro = _intro;
-                break;
             }
         }
-
     }
+    
 }

@@ -1,6 +1,7 @@
 package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import org.fisco.bcos.Variables;
 import org.fisco.bcos.Contracts.Market;
 import org.fisco.bcos.Service.Interface.ISigninService;
 import org.fisco.bcos.constants.GasConstants;
@@ -21,16 +22,17 @@ public class SigninService implements ISigninService {
     @Autowired
     private Web3j web3j;
 
+    @Autowired
+    private Variables variables;
+
     @Override
     public JSONObject signin(String key) throws Exception{
 
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 
-        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
-
         Market market = Market.load(
-                contract,
+                variables.getMarket(),
                 web3j,
                 credentials,
                 new StaticGasProvider(

@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 
 @Service
-public class SellService implements ISellService {
+public class
+SellService implements ISellService {
 
     @Autowired
     private Web3j web3j;

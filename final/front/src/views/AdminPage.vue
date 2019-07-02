@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page">
     <el-menu
       :default-active="activeIndex"
       mode="horizontal"
@@ -20,7 +20,7 @@
 
 <script>
 import AdminMarket from "@/components/AdminMarket";
-import AdminTran from "@/components/AdminTran";
+import AdminOrder from "@/components/AdminOrder";
 import AdminReturnInfo from "@/components/AdminReturnInfo";
 export default {
   name: "AdminPage",
@@ -32,7 +32,7 @@ export default {
   components: {
     AdminReturnInfo,
     AdminMarket,
-    AdminTran
+    AdminOrder
   },
   methods: {
     headleSelect(index) {
@@ -49,7 +49,7 @@ export default {
           return "admin-market";
         }
         case "2": {
-          return "admin-tran";
+          return "admin-order";
         }
       }
       // 默认返回
@@ -60,15 +60,17 @@ export default {
 </script>
 
 <style scoped>
+.admin-page {
+  min-width: 768px;
+}
 .title {
   font-size: 30px;
   color: white;
-  margin-left: 50px;
-  margin-top: 8px;
 }
 
 .el-menu--horizontal-self {
   padding-right: 100px;
+  padding-left: 80px;
 }
 
 .el-menu-item-self {
@@ -77,6 +79,7 @@ export default {
 }
 .user-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
 }
 </style>

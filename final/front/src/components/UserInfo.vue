@@ -1,5 +1,5 @@
 <template>
-  <div id="user-page">
+  <div>
     <el-card class="user-info-card">
       <div slot="header">
         <span>用户信息</span>
@@ -662,7 +662,7 @@ export default {
   created() {
     // 读取地址信息
     this.address = sessionStorage.getItem("address");
-    
+
     this.balancePercentage =
       this.balance / 500 > 100 ? 100 : this.balance / 500;
 

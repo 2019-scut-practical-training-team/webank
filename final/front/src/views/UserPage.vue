@@ -9,6 +9,7 @@
       class="el-menu--horizontal-self"
       @select="headleSelect"
     >
+      <div class="title">PetShop</div>
       <el-menu-item index="1" class="el-menu-item-self">宠物市场</el-menu-item>
       <el-menu-item index="0" class="el-menu-item-self">个人信息</el-menu-item>
     </el-menu>
@@ -23,7 +24,7 @@ export default {
   name: "UserPage",
   data() {
     return {
-      activeIndex: "1"
+      activeIndex: "0"
     };
   },
   components: {
@@ -55,6 +56,12 @@ export default {
 <style scoped>
 .user-page {
   min-width: 768px;
+}
+.title {
+  display: inline;
+  color: white;
+  margin-left: 80px;
+  font-size: 30px;
 }
 .el-menu--horizontal-self {
   padding-right: 100px;

@@ -18,20 +18,36 @@
       </el-form-item>
       <!-- <el-divider style="margin-bottom: 0"></el-divider> -->
       <el-form-item label="密钥：" prop="privateKey">
-        <el-input v-model="form.privateKey" placeholder="请输入你的密钥" prefix-icon="el-icon-key"></el-input>
+        <el-input
+          v-model="form.privateKey"
+          placeholder="请输入你的密钥"
+          prefix-icon="el-icon-key"
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="button-width" @click="login('form')">登录</el-button>
+        <el-button type="primary" class="button-width" @click="login('form')"
+          >登录</el-button
+        >
       </el-form-item>
       <el-divider content-position="center">还没有账号？</el-divider>
       <el-form-item>
-        <el-button class="button-width" @click="signUpDialogVisible = true">注册</el-button>
+        <el-button class="button-width" @click="signUpDialogVisible = true"
+          >注册</el-button
+        >
       </el-form-item>
     </el-form>
-    <el-dialog title="提示" :visible.sync="signUpDialogVisible" width="380px" show-close center>
+    <el-dialog
+      title="提示"
+      :visible.sync="signUpDialogVisible"
+      width="380px"
+      show-close
+      center
+    >
       <span>是否确认注册账号</span>
       <span slot="footer">
-        <el-button type="primary" @click="signUpDialogVisible = false">确认</el-button>
+        <el-button type="primary" @click="signUpDialogVisible = false"
+          >确认</el-button
+        >
         <el-button @click="signUpDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -74,8 +90,18 @@ export default {
           // 模拟登录
           sessionStorage.setItem("privateKey", "123456");
           sessionStorage.setItem("address", "123456");
+          // 进入管理员页面
+          let identity = 2;
+          sessionStorage.setItem("identity", identity);
           // 路由跳转
-          this.$router.push("admin");
+          switch (identity) {
+            case 1:
+              this.$router.push("/user");
+              break;
+            case 2:
+              this.$router.push("/admin");
+              break;
+          }
         } else {
           this.$message({
             message: "登录失败",

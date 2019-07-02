@@ -221,7 +221,7 @@ contract Market is DataProcess{
 
     function createPet(string _type, uint16 _price, string _name,  string _img, string _intro) public {
         //判断是否已创建过宠物
-        require(createdPet[msg.sender] == 0);
+        require(createdPet[msg.sender] == 0,"fuckyou");
         createdPet[msg.sender] = 1;
         petList.push(Pet(_name, getIntToString(petIdNum), _type, _price, 0, _img, _intro, msg.sender));
         setPetOwner(getIntToString(petIdNum),msg.sender);

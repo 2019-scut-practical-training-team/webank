@@ -39,8 +39,6 @@ public class ContractTest extends BaseTest {
 //            System.out.println(result);
 //            assertTrue("Hello, World!".equals(result));
 //        }
-
-        try {
             Market market = Market.deploy(
                     web3j,
                     credentials,
@@ -50,14 +48,7 @@ public class ContractTest extends BaseTest {
             if (market != null) {
                 System.out.println("HelloWorld address is: " + market.getContractAddress());
             }
-        }
-        catch (Exception e){
-            final Writer result = new StringWriter();
-            final PrintWriter print = new PrintWriter(result);
-            e.printStackTrace(print);
-            System.out.println("==============================="+result.toString());
 
-        }
 
     }
 }

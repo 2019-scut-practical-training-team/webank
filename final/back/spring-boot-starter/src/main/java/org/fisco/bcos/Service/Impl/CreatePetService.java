@@ -1,9 +1,11 @@
 package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections4.bidimap.AbstractBidiMapDecorator;
 import org.fisco.bcos.Bean.PetsListItem;
 import org.fisco.bcos.Contracts.Market;
 import org.fisco.bcos.Service.Interface.ICreatePetService;
+import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.EncryptType;
@@ -20,32 +22,42 @@ import org.springframework.stereotype.Service;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class CreatePetService implements ICreatePetService {
 
     @Autowired
     private Web3j web3j;
+
+    @Autowired
+    private Variables variables;
 
     @Override
     public JSONObject createPet(String key, PetsListItem item) throws Exception{
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 
-        String contract = "0xa7f3026b5b9274c7b96ba0c5bbbf3db866b2f3ed";
 
         Market market = Market.load(
-                contract,
+                variables.getMarket(),
                 web3j,
                 credentials,
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
         TransactionReceipt transactionReceipt = market.createPet(item.getPetName(),BigInteger.valueOf(item.getPetPrice()),item.getPetType(),item.getPetImg(), item.getPetIntro()).send();
-        String logs  = market.getTransactionReceipt().toString();
+
+        String status = transactionReceipt.getStatus();
 
         JSONObject object = new JSONObject();
-        object.put("checked",true);
+
+        if (status.equals("0x0"))
+            object.put("checked",true);
+
+        else if (status.equals("0x16"))
+            object.put("checked",false);
 
         return object;
     }

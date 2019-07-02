@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "variables")
 public class Variables {
 
-    private String market = "0xfb4bf907c9a64f7b3a0a2afd901fee46b83606ca";
-    private String order = "0x123";
-    private String admin = "0x123";
+    private String market = "0x5bf9026b4f5e177e4f09f417dc69c9331b093c19";
+    private String order = "0x325307d51634b15c8938ffc14c0dafd8aa495bd0";
+    private String admin = "0x00d892c4cefa29abf0fe53593790bd172966e5025d5a7c903c8cbd2afab6ebd3cc";
 
     public String getMarket() {
         return market;

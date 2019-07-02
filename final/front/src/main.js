@@ -16,6 +16,19 @@ Vue.prototype.$axios = axios;
 Vue.config.productionTip = true;
 Vue.use(ElementUI);
 
+// 如果没有登录的话强制跳转到首页
+router.beforeEach((to, from, next) => {
+  if (to.path == "/") {
+    next();
+  } else {
+    if (sessionStorage.getItem("privateKey")) {
+      next();
+    } else {
+      next("/");
+    }
+  }
+})
+
 new Vue({
   router,
   render: h => h(App)

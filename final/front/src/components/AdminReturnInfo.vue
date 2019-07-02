@@ -12,7 +12,7 @@
           <div class="text">
             <span>交易价格：{{ l.perPrice }}</span>
             <span>卖家账户：{{ l.orderSeller }}</span>
-            <span v-if="l.orderStatus == 1">退货理由：{{l.reason}}</span>
+            <span v-if="l.orderStatus == 1">退货理由：{{ l.reason }}</span>
           </div>
           <el-button
             type="primary"
@@ -51,7 +51,7 @@ export default {
           petId: 1,
           petPrice: 2000,
           orderStatus: 1,
-          reason:"不要了"
+          reason: "不要了"
         },
         {
           orderId: 2,
@@ -61,7 +61,7 @@ export default {
           petId: 1,
           petPrice: 2000,
           orderStatus: 1,
-          reason:"不要了"
+          reason: "不要了"
         },
         {
           orderId: 3,
@@ -71,7 +71,7 @@ export default {
           petId: 1,
           petPrice: 2000,
           orderStatus: 1,
-          reason:"不要了"
+          reason: "不要了"
         }
       ]
     };

@@ -1,23 +1,23 @@
 <template>
-<div class="all">
-  <div class="tranContainer">
-    <div v-for="l in list" :key="l" style="margin-top:20px;">
-      <el-card class="box-card">
-        <div class="container">
-          <img :src="l.petImg" class="image" />
-          <div class="text">
-            <span >名字：{{ l.petName }}</span>
-            <span>价格：{{ l.petPrice }}</span>
-            <span>宠物类别：{{ l.petType }}</span>
-            <span>宠物ID：{{ l.petId }}</span>
-            <span>介绍：{{ l.petIntro}}</span>
-            <span>卖家账户：{{ l.owner }}</span>
+  <div class="all">
+    <div class="tranContainer">
+      <div v-for="l in list" :key="l" style="margin-top:20px;">
+        <el-card class="box-card">
+          <div class="container">
+            <img :src="l.petImg" class="image" />
+            <div class="text">
+              <span>名字：{{ l.petName }}</span>
+              <span>价格：{{ l.petPrice }}</span>
+              <span>宠物类别：{{ l.petType }}</span>
+              <span>宠物ID：{{ l.petId }}</span>
+              <span>介绍：{{ l.petIntro }}</span>
+              <span>卖家账户：{{ l.owner }}</span>
+            </div>
           </div>
-        </div>
-      </el-card>
+        </el-card>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -114,10 +114,10 @@ export default {
   flex-wrap: wrap;
 }
 
-.all{
+.all {
   display: flex;
   justify-content: center;
-  align-items: center;  
+  align-items: center;
   margin-left: 5%;
 }
 </style>

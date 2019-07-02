@@ -43,6 +43,7 @@ public class SigninService implements ISigninService {
 
         JSONObject json = new JSONObject();
         json.put("identity",identity);
+        json.put("address",credentials.getEcKeyPair().getPublicKey().toString(16));
         return json;
     }
 }

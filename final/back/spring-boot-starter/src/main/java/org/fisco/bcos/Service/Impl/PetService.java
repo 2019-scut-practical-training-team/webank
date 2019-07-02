@@ -45,6 +45,7 @@ public class PetService implements IPetService {
 //            jsonArray.add(jsonObject);
 //        }
 //        return jsonArray.toJSONString();
-        return  market.showPetOnSell().send();
+        //return  market.showPetOnSell().send();
+        return "fuck";
     }
 }

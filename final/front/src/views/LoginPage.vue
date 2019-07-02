@@ -11,44 +11,27 @@
       label-width="auto"
       class="login-form"
       label-position="top"
+      :rules="loginRules"
     >
       <el-form-item>
         <span class="login-header">登录</span>
       </el-form-item>
       <!-- <el-divider style="margin-bottom: 0"></el-divider> -->
-      <el-form-item label="密钥：">
-        <el-input
-          v-model="form.privateKey"
-          placeholder="请输入你的密钥"
-          prefix-icon="el-icon-key"
-          maxlength="67"
-          show-word-limit
-        ></el-input>
+      <el-form-item label="密钥：" prop="privateKey">
+        <el-input v-model="form.privateKey" placeholder="请输入你的密钥" prefix-icon="el-icon-key"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="button-width" @click="login()"
-          >登录</el-button
-        >
+        <el-button type="primary" class="button-width" @click="login('form')">登录</el-button>
       </el-form-item>
       <el-divider content-position="center">还没有账号？</el-divider>
       <el-form-item>
-        <el-button class="button-width" @click="signUpDialogVisible = true"
-          >注册</el-button
-        >
+        <el-button class="button-width" @click="signUpDialogVisible = true">注册</el-button>
       </el-form-item>
     </el-form>
-    <el-dialog
-      title="提示"
-      :visible.sync="signUpDialogVisible"
-      width="380px"
-      show-close
-      center
-    >
+    <el-dialog title="提示" :visible.sync="signUpDialogVisible" width="380px" show-close center>
       <span>是否确认注册账号</span>
       <span slot="footer">
-        <el-button type="primary" @click="signUpDialogVisible = false"
-          >确认</el-button
-        >
+        <el-button type="primary" @click="signUpDialogVisible = false">确认</el-button>
         <el-button @click="signUpDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -59,6 +42,13 @@
 export default {
   name: "LoginPage",
   data: function() {
+    var validatePrivateKey = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密钥"));
+      } else {
+        callback();
+      }
+    };
     return {
       backgroundHeight: {
         height: ""
@@ -66,7 +56,10 @@ export default {
       form: {
         privateKey: ""
       },
-      signUpDialogVisible: false
+      signUpDialogVisible: false,
+      loginRules: {
+        privateKey: [{ validator: validatePrivateKey, trigger: "blur" }]
+      }
     };
   },
   methods: {
@@ -74,15 +67,30 @@ export default {
     getHeight() {
       this.backgroundHeight.height = window.innerHeight / 2.8 + "px";
     },
-    login() {
-      this.$router.push("user");
+    login(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          // 登录成功
+          // 模拟登录
+          sessionStorage.setItem("privateKey", "123456");
+          sessionStorage.setItem("address", "123456");
+          // 路由跳转
+          this.$router.push("admin");
+        } else {
+          this.$message({
+            message: "登录失败",
+            type: "error"
+          });
+          return false;
+        }
+      });
     }
   },
   created() {
     window.addEventListener("resize", this.getHeight);
     this.getHeight();
     // 开发需要，直接跳转
-    this.login();
+    // this.login();
   },
   destroyed() {
     window.removeEventListener("resize", this.getHeight);

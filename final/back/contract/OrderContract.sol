@@ -51,9 +51,14 @@ contract OrderContract is DataProcess{
         orderIdNum++;
     }
 
+    
+    
+    //外部可调用函数：
 
     //订单相关：
     //公用获得订单函数，买方，卖方，管理员可看
+    //输入订单下标
+    //返回 订单id，买家，卖家，时间，宠物id，宠物价格，订单状态
     function getOrderById(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
@@ -62,7 +67,8 @@ contract OrderContract is DataProcess{
     
     //管理员部分：
     //返回所有订单（管理员查看
-    function adminGetOrderId() view public isAdmin(msg.sender) returns(uint[]){
+    //返回订单下标数组
+    function adminGetOrderIndex() view public isAdmin(msg.sender) returns(uint[]){
         uint[] memory temp = new uint[](orderIdNum - 1);
         for(uint i=0;i<orderList.length;i++){
             temp[i] = i;
@@ -72,7 +78,8 @@ contract OrderContract is DataProcess{
     
     
     //管理员获得请求仲裁的订单
-    function adminGetReturnOrderId() view public isAdmin(msg.sender) returns(uint[]){
+    //返回订单下标数组
+    function adminGetReturnOrderIndex() view public isAdmin(msg.sender) returns(uint[]){
         uint count=0;
         for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderStatus == 1){
@@ -93,6 +100,7 @@ contract OrderContract is DataProcess{
     
     //退货相关：
     //管理员接受退货申请
+    //输入 订单id
     function acceptReturn(string _orderId) public isAdmin(msg.sender) {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
@@ -104,7 +112,9 @@ contract OrderContract is DataProcess{
             }
         }
     }
+    
     //管理员拒绝退货申请
+    //输入 订单id
     function rejectReturn(string _orderId) public isAdmin(msg.sender) {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
@@ -118,6 +128,7 @@ contract OrderContract is DataProcess{
 
     //用户部分：
     //用户获得自己的订单列表
+    //返回订单下标数组
     function userGetOrderId() public view returns(uint[]){
         uint[] memory temp = new uint[](orderIdNum-1);
         for(uint i = 0;i < orderList.length;i++){
@@ -130,14 +141,15 @@ contract OrderContract is DataProcess{
     
     
     //申请退货
+    //输入 订单id 退货原因
     function applyForReturn(string _orderId, string _reason) public {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
                 //判断申请者为买方且订单状态为可退货
-                require(orderList[i].orderBuyer == msg.sender && orderList[i].orderStatus == 0);
+                require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
+                require(orderList[i].orderStatus == 0, "This order can't be return!");
                 orderList[i].orderStatus = 1;
                 orderList[i].returnReason = _reason;
-                break;
             }
         }
         

@@ -5,6 +5,7 @@ import "./DataProcess.sol";
 interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
     function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
+    function getPetOwner(string _petId) external view returns(address);
 }
 
 contract OrderContract is DataProcess{
@@ -59,7 +60,7 @@ contract OrderContract is DataProcess{
     //公用获得订单函数，买方，卖方，管理员可看
     //输入订单下标
     //返回 订单id，买家，卖家，时间，宠物id，宠物价格，订单状态
-    function getOrderById(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
+    function getOrderByIndex(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
     }
@@ -130,10 +131,18 @@ contract OrderContract is DataProcess{
     //用户获得自己的订单列表
     //返回订单下标数组
     function userGetOrderId() public view returns(uint[]){
-        uint[] memory temp = new uint[](orderIdNum-1);
-        for(uint i = 0;i < orderList.length;i++){
+        uint count=0;
+        for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
-                temp[i]=i;
+                count++;
+            }
+        }
+        uint[] memory temp = new uint[](count);
+        count=0;
+        for(i = 0;i < orderList.length;i++){
+            if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
+                temp[count]=i;
+                count++;
             }
         }
         return temp;
@@ -148,6 +157,7 @@ contract OrderContract is DataProcess{
                 //判断申请者为买方且订单状态为可退货
                 require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
                 require(orderList[i].orderStatus == 0, "This order can't be return!");
+                require(MK.getPetOwner(orderList[i].petId)==msg.sender);
                 orderList[i].orderStatus = 1;
                 orderList[i].returnReason = _reason;
             }

@@ -26,7 +26,7 @@ public class SellService implements ISellService {
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 
-        String contract = "0x3d7bfc7b9cca1a7a78c23ac90fe165cb9f2d8a19";
+        String contract = "0xa7f3026b5b9274c7b96ba0c5bbbf3db866b2f3ed";
 
         Market market = Market.load(
                 contract,

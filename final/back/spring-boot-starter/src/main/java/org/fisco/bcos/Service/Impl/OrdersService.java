@@ -34,12 +34,12 @@ public class OrdersService implements IOrdersService {
         JSONObject send = new JSONObject();
         JSONArray jsonArray = new JSONArray();
 
-        List index = orderContract.adminGetOrderId().send();
+        List index = orderContract.adminGetOrderIndex().send();
         for (int i = 0; i < index.size(); i++){
             JSONObject jsonObject = new JSONObject();
 
             BigInteger id = new BigInteger(index.get(i).toString());
-            Tuple7<String, String, String, String, String, BigInteger, BigInteger> t = orderContract.getOrderById(id).send();
+            Tuple7<String, String, String, String, String, BigInteger, BigInteger> t = orderContract.getOrderByIndex(id).send();
             jsonObject.put("orderId", t.getValue1());
             jsonObject.put("orderBuyer", t.getValue2());
             jsonObject.put("orderSeller", t.getValue3());

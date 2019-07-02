@@ -3,6 +3,7 @@ package org.fisco.bcos;
 import static org.junit.Assert.assertTrue;
 
 import org.fisco.bcos.Contracts.Market;
+import org.fisco.bcos.Contracts.OrderContract;
 import org.fisco.bcos.constants.GasConstants;
 import org.fisco.bcos.temp.HelloWorld;
 import org.fisco.bcos.web3j.crypto.Credentials;
@@ -39,7 +40,7 @@ public class ContractTest extends BaseTest {
 //            System.out.println(result);
 //            assertTrue("Hello, World!".equals(result));
 //        }
-            Market market = Market.deploy(
+            OrderContract market = OrderContract.deploy(
                     web3j,
                     credentials,
                     new StaticGasProvider(

@@ -3,37 +3,79 @@
     <el-card class="return-orders-card">
       <div slot="header">退款订单</div>
       <el-table :data="orderList" style="width: 100%; margin-bottom: 20px">
-        <el-table-column prop="orderId" label="订单编号" width="50px"></el-table-column>
-        <el-table-column prop="orderBuyer" label="买家" width="200px"></el-table-column>
-        <el-table-column prop="orderSeller" label="卖家" width="200px"></el-table-column>
-        <el-table-column prop="orderTime" label="时间" width="240px"></el-table-column>
-        <el-table-column prop="petId" label="宠物ID" width="50px"></el-table-column>
-        <el-table-column prop="petPrice" label="宠物价格" width="80px"></el-table-column>
-        <el-table-column prop="reason" label="退款理由" width="140px"></el-table-column>
+        <el-table-column
+          prop="orderId"
+          label="订单编号"
+          width="50px"
+        ></el-table-column>
+        <el-table-column
+          prop="orderBuyer"
+          label="买家"
+          width="200px"
+        ></el-table-column>
+        <el-table-column
+          prop="orderSeller"
+          label="卖家"
+          width="200px"
+        ></el-table-column>
+        <el-table-column
+          prop="orderTime"
+          label="时间"
+          width="240px"
+        ></el-table-column>
+        <el-table-column
+          prop="petId"
+          label="宠物ID"
+          width="50px"
+        ></el-table-column>
+        <el-table-column
+          prop="petPrice"
+          label="宠物价格"
+          width="80px"
+        ></el-table-column>
+        <el-table-column
+          prop="reason"
+          label="退款理由"
+          width="140px"
+        ></el-table-column>
         <el-table-column fixed="right" label="操作" width="100px">
           <template slot-scope="scope">
             <el-button
               type="text"
               size="small"
-              @click.native.prevent="handleConfirmReturn(scope.$index, orderList)"
-            >同意</el-button>
+              @click.native.prevent="
+                handleConfirmReturn(scope.$index, orderList)
+              "
+              >同意</el-button
+            >
             <el-button
               type="text"
               size="small"
               @click="handleRejectReturn(scope.$index, orderList)"
-            >拒绝</el-button>
+              >拒绝</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog title="确认同意" :visible.sync="confirmReturnDialogVisiable" width="500px">
+    <el-dialog
+      title="确认同意"
+      :visible.sync="confirmReturnDialogVisiable"
+      width="500px"
+    >
       <span>是否确认同意退款</span>
       <span slot="footer">
-        <el-button type="primary" @click="submitConfirmReturn()">确定</el-button>
+        <el-button type="primary" @click="submitConfirmReturn()"
+          >确定</el-button
+        >
         <el-button @click="confirmReturnDialogVisiable = false">取消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="确认取消" :visible.sync="rejectReturnDialogVisiable" width="500px">
+    <el-dialog
+      title="确认取消"
+      :visible.sync="rejectReturnDialogVisiable"
+      width="500px"
+    >
       <span>是否确认拒绝退款</span>
       <span slot="footer">
         <el-button type="primary" @click="submitRejectReturn()">确定</el-button>
@@ -132,7 +174,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .return-orders-card {
-  width: 960px;
+  width: 1100px;
   margin: 80px 0;
 }
 </style>

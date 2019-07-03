@@ -12,6 +12,7 @@
       class="login-form"
       label-position="top"
       :rules="loginRules"
+      @submit.native.prevent
     >
       <el-form-item>
         <span class="login-header">登录</span>
@@ -22,6 +23,7 @@
           v-model="form.privateKey"
           placeholder="请输入你的密钥"
           prefix-icon="el-icon-key"
+          @keyup.enter.native="login('form')"
         ></el-input>
       </el-form-item>
       <el-form-item>
@@ -85,23 +87,32 @@ export default {
     },
     login(formName) {
       this.$refs[formName].validate(valid => {
+        // window.console.log(this.$axios.baseURL);
         if (valid) {
           // 登录成功
           // 模拟登录
-          sessionStorage.setItem("privateKey", "123456");
-          sessionStorage.setItem("address", "123456");
-          // 进入管理员页面
-          let identity = 2;
-          sessionStorage.setItem("identity", identity);
-          // 路由跳转
-          switch (identity) {
-            case 1:
-              this.$router.push("/user");
-              break;
-            case 2:
-              this.$router.push("/admin");
-              break;
-          }
+          // sessionStorage.setItem("privateKey", "123456");
+          // sessionStorage.setItem("address", "123456");
+          // // 进入管理员页面
+          // let identity = 2;
+          // sessionStorage.setItem("identity", identity);
+          // // 路由跳转
+          // switch (identity) {
+          //   case 1:
+          //     this.$router.push("/user");
+          //     break;
+          //   case 2:
+          //     this.$router.push("/admin");
+          //     break;
+          // }
+
+          this.$axios.get( this.$axios.baseURL + "/api/register",{
+            key: this.form.privateKey
+          }).then((response) => {
+            window.console.log(response);
+          }).catch((error) => {
+            window.console.log(error);
+          })
         } else {
           this.$message({
             message: "登录失败",

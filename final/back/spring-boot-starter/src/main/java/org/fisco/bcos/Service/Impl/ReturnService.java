@@ -31,7 +31,7 @@ public class ReturnService implements IReturnService {
     private Variables variables;
 
     @Override
-    public JSONObject returnOrder(String key, String orderId,String reason) throws Exception {
+    public JSONObject returnOrder(String key, int orderId,String reason) throws Exception {
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 
@@ -43,7 +43,7 @@ public class ReturnService implements IReturnService {
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
 
-        TransactionReceipt transactionReceipt = orderContract.applyForReturn(orderId,reason).send();
+        TransactionReceipt transactionReceipt = orderContract.applyForReturn(String.valueOf(orderId),reason).send();
         String status = transactionReceipt.getStatus();
 
         JSONObject object = new JSONObject();

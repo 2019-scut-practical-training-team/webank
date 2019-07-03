@@ -2,6 +2,8 @@ package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Contracts.Market;
+import org.fisco.bcos.Dao.Impl.RegisterDao;
+import org.fisco.bcos.Dao.Interface.IRegisterDao;
 import org.fisco.bcos.Service.Interface.IRegisterService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -17,35 +19,16 @@ import org.springframework.stereotype.Service;
 public class RegisterService implements IRegisterService {
 
     @Autowired
-    private Web3j web3j;
-
-    @Autowired
-    private Variables variables;
+    private IRegisterDao registerDao;
 
     @Override
     public JSONObject register()  throws Exception{
-        EncryptType.encryptType = 0;
-        Credentials credentials = GenCredential.create();
-        String publicKey = credentials.getEcKeyPair().getPublicKey().toString(16);
-
-        Market market = Market.load(
-                variables.getMarket(),
-                web3j,
-                credentials,
-                new StaticGasProvider(
-                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
-
-        JSONObject object = new JSONObject();
 
         try {
-            market.createUser().send();
-
-            object.put("checked", true);
-            object.put("address", publicKey);
-            return object;
+            return registerDao.register();
         }
         catch (Exception e){
-            System.out.println("Register failed!");
+            JSONObject object = new JSONObject();
             object.put("checked", false);
             object.put("address", "none");
             return object;

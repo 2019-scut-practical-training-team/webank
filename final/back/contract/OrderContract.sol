@@ -5,7 +5,7 @@ import "./DataProcess.sol";
 interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
     function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
-    function getPetOwner(string _petId) external view returns(address);
+    function orderGetPetOwner(string _petId, address _caller) external view returns(address);
 }
 
 contract OrderContract is DataProcess{
@@ -161,7 +161,7 @@ contract OrderContract is DataProcess{
                 //判断申请者为买方且订单状态为可退货
                 require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
                 require(orderList[i].orderStatus == 0, "This order can't be return!");
-                require(MK.getPetOwner(orderList[i].petId)==msg.sender);
+                require(MK.orderGetPetOwner(orderList[i].petId, msg.sender)==msg.sender);
                 orderList[i].orderStatus = 1;
                 orderList[i].returnReason = _reason;
             }

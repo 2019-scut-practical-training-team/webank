@@ -123,6 +123,15 @@ contract Market is DataProcess{
             }
         }
     }
+    function orderGetPetOwner(string _petId, address _caller) public view returns(address){
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
+                require(_caller==petList[i].Owner || petList[i].petStatus==1);
+                return petList[i].Owner;
+            }
+        }
+    }
 
 
 

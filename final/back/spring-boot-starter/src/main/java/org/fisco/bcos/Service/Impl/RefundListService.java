@@ -49,7 +49,7 @@ public class RefundListService implements IRefundListService {
             jsonArray.add(jsonObject);
         }
 
-        send.put("orderlist", jsonArray);
+        send.put("orderList", jsonArray);
 
         return send;
     }

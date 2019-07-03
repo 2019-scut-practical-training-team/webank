@@ -26,7 +26,7 @@ public class RegisterService implements IRegisterService {
     public JSONObject register()  throws Exception{
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create();
-        String privateKey = credentials.getEcKeyPair().getPrivateKey().toString(16);
+        String publicKey = credentials.getEcKeyPair().getPublicKey().toString(16);
 
         Market market = Market.load(
                 variables.getMarket(),
@@ -41,13 +41,13 @@ public class RegisterService implements IRegisterService {
             market.createUser().send();
 
             object.put("checked", true);
-            object.put("key", privateKey);
+            object.put("address", publicKey);
             return object;
         }
         catch (Exception e){
             System.out.println("Register failed!");
             object.put("checked", false);
-            object.put("key", "none");
+            object.put("address", "none");
             return object;
         }
     }

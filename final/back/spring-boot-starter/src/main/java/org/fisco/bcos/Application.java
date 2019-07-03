@@ -9,11 +9,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.fisco.bcos.Contracts.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+@CrossOrigin(origins = "*")
 @SpringBootApplication
 @EnableConfigurationProperties
 public class Application {

@@ -28,6 +28,7 @@ public class SigninService implements ISigninService {
     @Override
     public JSONObject signin(String key) throws Exception{
 
+
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
 

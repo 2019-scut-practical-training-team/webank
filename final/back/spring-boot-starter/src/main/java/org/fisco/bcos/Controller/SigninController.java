@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class SigninController {
     @Autowired
@@ -19,7 +21,6 @@ public class SigninController {
         String key = object.getString("key");
 
         return siService.signin(key);
-
-
     }
+
 }

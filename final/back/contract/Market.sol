@@ -229,7 +229,7 @@ contract Market is DataProcess{
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
                 //判断宠物是否在售
-		        require(petList[i].Owner==msg.sender, "You can't buy your pet!");
+		        require(petList[i].Owner!=msg.sender, "You can't buy your pet!");
                 require(petList[i].petStatus==1, "This pet is not on sell!");
                 pay(msg.sender, petList[i].Owner, petList[i].petPrice);
                 OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);

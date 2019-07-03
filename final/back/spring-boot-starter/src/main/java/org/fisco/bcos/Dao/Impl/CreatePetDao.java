@@ -1,14 +1,16 @@
 package org.fisco.bcos.Dao.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import org.fisco.bcos.Bean.PetsListItem;
 import org.fisco.bcos.Contracts.Market;
-import org.fisco.bcos.Dao.Interface.IBalanceDao;
+import org.fisco.bcos.Dao.Interface.ICreatePetDao;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,7 +18,8 @@ import org.springframework.stereotype.Repository;
 import java.math.BigInteger;
 
 @Repository
-public class BalanceDao implements IBalanceDao {
+public class CreatePetDao implements ICreatePetDao {
+
     @Autowired
     private Web3j web3j;
 
@@ -24,9 +27,10 @@ public class BalanceDao implements IBalanceDao {
     private Variables variables;
 
     @Override
-    public JSONObject getBalance(String key) throws Exception {
+    public TransactionReceipt createPet(String key, PetsListItem item) throws Exception {
         EncryptType.encryptType = 0;
         Credentials credentials = GenCredential.create(key);
+
 
         Market market = Market.load(
                 variables.getMarket(),
@@ -35,10 +39,9 @@ public class BalanceDao implements IBalanceDao {
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
-        BigInteger balance = market.getBalanceOfMe().send();
+        TransactionReceipt transactionReceipt = market.createPet(item.getPetType(), BigInteger.valueOf(item.getPetPrice()),item.getPetName(),item.getPetImg(), item.getPetIntro()).send();
 
-        JSONObject object = new JSONObject();
-        object.put("balance",balance);
-        return object;
+        return transactionReceipt;
+
     }
 }

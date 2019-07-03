@@ -2,6 +2,8 @@ package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Contracts.OrderContract;
+import org.fisco.bcos.Dao.Interface.IRefundDao;
+import org.fisco.bcos.Dao.Interface.IReturnDao;
 import org.fisco.bcos.Service.Interface.IRefundService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -15,32 +17,28 @@ import org.springframework.stereotype.Service;
 
 @Service(value = "refundService")
 public class RefundService implements IRefundService {
-    @Autowired
-    private Variables variables;
-    @Autowired
-    private Web3j web3j;
 
+    @Autowired
+    private IRefundDao refundDao;
 
     @Override
     public JSONObject refund(String orderid, int op) throws Exception{
-        Credentials credentials = GenCredential.create(variables.getAdmin());
-        OrderContract orderContract = OrderContract.load(variables.getOrder(), web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
-        TransactionReceipt transactionReceipt;
+        try {
+            TransactionReceipt transactionReceipt = refundDao.refund(orderid, op);
+            JSONObject send = new JSONObject();
 
-        if (op == 1)
-            transactionReceipt = orderContract.rejectReturn(orderid).send();
-        else
-            transactionReceipt = orderContract.acceptReturn(orderid).send();
-
-        JSONObject send = new JSONObject();
-        if (transactionReceipt.getStatus().equals("0x0")){
-            send.put("checked",true);
+            if (transactionReceipt.getStatus().equals("0x0")){
+                send.put("checked",true);
+            }
+            else if (transactionReceipt.getStatus().equals("0x16")){
+                send.put("checked",false);
+            }
+            return send;
         }
-        else if (transactionReceipt.getStatus().equals("0x16")){
-            send.put("checked",false);
+        catch (Exception e){
+            JSONObject object = new JSONObject();
+            object.put("checked", "error");
+            return object;
         }
-        else
-            send.put("checked","error"+transactionReceipt.getStatus());
-        return send;
     }
 }

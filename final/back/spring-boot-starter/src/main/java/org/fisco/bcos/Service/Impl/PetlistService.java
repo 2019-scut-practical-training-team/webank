@@ -44,11 +44,6 @@ public class PetlistService implements IPetlistService {
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
-        //BigInteger[] indexs = market.getIndex().send;
-//        PetsListItem[] list;
-//        for(int i=0;i<index.length;i++){
-//               list[i]=market.getpet();
-//        }
         List list = market.getPetIndex().send();
         JSONArray jsonArray = new JSONArray();
         for(int i=0;i<list.size();i++){

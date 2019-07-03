@@ -47,7 +47,7 @@ public class CreatePetService implements ICreatePetService {
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
-        TransactionReceipt transactionReceipt = market.createPet(item.getPetName(),BigInteger.valueOf(item.getPetPrice()),item.getPetType(),item.getPetImg(), item.getPetIntro()).send();
+        TransactionReceipt transactionReceipt = market.createPet(item.getPetType(),BigInteger.valueOf(item.getPetPrice()),item.getPetName(),item.getPetImg(), item.getPetIntro()).send();
 
         String status = transactionReceipt.getStatus();
 

@@ -45,9 +45,10 @@ public class PetService implements IPetService {
             jsonObject.put("petType", t.getValue2());
             jsonObject.put("petPrice", t.getValue3());
             jsonObject.put("petName", t.getValue4());
-            jsonObject.put("petImg", t.getValue5());
-            jsonObject.put("petIntro", t.getValue6());
-            jsonObject.put("owner", t.getValue7());
+            jsonObject.put("petImg", t.getValue6());
+            jsonObject.put("petIntro", t.getValue7());
+
+            jsonObject.put("owner", market.getPetOwner(t.getValue1()).send());
             jsonArray.add(jsonObject);
         }
 

@@ -117,6 +117,8 @@ contract Market is DataProcess{
     function getPetOwner(string _petId) public view returns(address){
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
+                require(msg.sender==petList[i].Owner || petList[i].petStatus==1);
                 return petList[i].Owner;
             }
         }
@@ -227,6 +229,7 @@ contract Market is DataProcess{
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
                 //判断宠物是否在售
+		        require(petList[i].Owner==msg.sender, "You can't buy your pet!");
                 require(petList[i].petStatus==1, "This pet is not on sell!");
                 pay(msg.sender, petList[i].Owner, petList[i].petPrice);
                 OD.createOrder(msg.sender, petList[i].Owner, _time, _petId, petList[i].petPrice, adminAddress);

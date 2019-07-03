@@ -64,6 +64,10 @@ contract OrderContract is DataProcess{
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
     }
+    //返回退款原因
+    function getReturnReasonByIndex(uint _orderIndex) view public isAdmin(msg.sender) returns(string) {
+        return (orderList[_orderIndex].returnReason);
+    }
     
     
     //管理员部分：
@@ -147,15 +151,14 @@ contract OrderContract is DataProcess{
         }
         return temp;
     }
-
     
     
     //申请退货
     //输入 订单id 退货原因
-    function applyForReturn() public {
+    function applyForReturn(string _orderId, string _reason) public {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                判断申请者为买方且订单状态为可退货
+                //判断申请者为买方且订单状态为可退货
                 require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
                 require(orderList[i].orderStatus == 0, "This order can't be return!");
                 require(MK.getPetOwner(orderList[i].petId)==msg.sender);

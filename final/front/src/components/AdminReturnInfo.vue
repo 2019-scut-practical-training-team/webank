@@ -1,53 +1,61 @@
 <template>
-  <div class="infoContainer">
-    <div v-for="(l, index) in list" :key="l" style="margin-top:20px;">
-      <el-card class="box-card" v-if="l.orderStatus == 1">
-        <span>订单号：{{ l.orderId }}</span>
-        <div class="container">
-          <div class="text">
-            <span>交易宠物ID：{{ l.petId }}</span>
-            <span>买家账户：{{ l.orderBuyer }}</span>
-            <span>交易时间：{{ l.orderTime }}</span>
-          </div>
-          <div class="text">
-            <span>交易价格：{{ l.perPrice }}</span>
-            <span>卖家账户：{{ l.orderSeller }}</span>
-            <span v-if="l.orderStatus == 1">退货理由：{{ l.reason }}</span>
-          </div>
-          <el-button
-            type="primary"
-            class="buttons"
-            style="margin-left:100px;"
-            @click="agree(index)"
-            >同意</el-button
-          >
-          <el-button
-            type="primary"
-            class="buttons"
-            style="margin-left:30px;"
-            @click="refuse(index)"
-            >拒绝</el-button
-          >
-        </div>
-      </el-card>
-    </div>
+  <div>
+    <el-card class="return-orders-card">
+      <div slot="header">退款订单</div>
+      <el-table :data="orderList" style="width: 100%; margin-bottom: 20px">
+        <el-table-column prop="orderId" label="订单编号" width="50px"></el-table-column>
+        <el-table-column prop="orderBuyer" label="买家" width="200px"></el-table-column>
+        <el-table-column prop="orderSeller" label="卖家" width="200px"></el-table-column>
+        <el-table-column prop="orderTime" label="时间" width="240px"></el-table-column>
+        <el-table-column prop="petId" label="宠物ID" width="50px"></el-table-column>
+        <el-table-column prop="petPrice" label="宠物价格" width="80px"></el-table-column>
+        <el-table-column prop="reason" label="退款理由" width="140px"></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100px">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click.native.prevent="handleConfirmReturn(scope.$index, orderList)"
+            >同意</el-button>
+            <el-button
+              type="text"
+              size="small"
+              @click="handleRejectReturn(scope.$index, orderList)"
+            >拒绝</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+    <el-dialog title="确认同意" :visible.sync="confirmReturnDialogVisiable" width="500px">
+      <span>是否确认同意退款</span>
+      <span slot="footer">
+        <el-button type="primary" @click="submitConfirmReturn()">确定</el-button>
+        <el-button @click="confirmReturnDialogVisiable = false">取消</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="确认取消" :visible.sync="rejectReturnDialogVisiable" width="500px">
+      <span>是否确认拒绝退款</span>
+      <span slot="footer">
+        <el-button type="primary" @click="submitRejectReturn()">确定</el-button>
+        <el-button @click="rejectReturnDialogVisiable = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
   name: "AdminReturnInfo",
-  watch() {
-    // list;
-  },
   data() {
     return {
-      list: [
+      confirmReturnDialogVisiable: false,
+      rejectReturnDialogVisiable: false,
+      orderList: [
         {
           orderId: 1,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
+          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
+          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
+          orderTime: "Tue Jul 02 10:25:10 CST 2019",
           petId: 1,
           petPrice: 2000,
           orderStatus: 1,
@@ -61,7 +69,7 @@ export default {
           petId: 1,
           petPrice: 2000,
           orderStatus: 1,
-          reason: "不要了"
+          reason: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
         },
         {
           orderId: 3,
@@ -72,35 +80,49 @@ export default {
           petPrice: 2000,
           orderStatus: 1,
           reason: "不要了"
+        },
+        {
+          orderId: 4,
+          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
+          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
+          orderTime: "Tue Jul 02 10:25:10 CST 2019",
+          petId: 1,
+          petPrice: 2000,
+          orderStatus: 1,
+          reason: "不要了"
         }
-      ]
+      ],
+      returningOrder: {
+        index: null,
+        rows: null
+      }
     };
   },
   methods: {
-    agree(index) {
-      this.$confirm("是否同意退货?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        this.$message({
-          type: "success",
-          message: "已同意退货"
-        });
-        this.list[index].orderStatus = 0;
+    handleConfirmReturn(index, rows) {
+      this.returningOrder.index = index;
+      this.returningOrder.rows = rows;
+      this.confirmReturnDialogVisiable = true;
+    },
+    handleRejectReturn(index, rows) {
+      this.returningOrder.index = index;
+      this.returningOrder.rows = rows;
+      this.rejectReturnDialogVisiable = true;
+    },
+    submitConfirmReturn() {
+      this.returningOrder.rows.splice(this.returningOrder.index, 1);
+      this.confirmReturnDialogVisiable = false;
+      this.$message({
+        message: "同意退款成功！",
+        type: "success"
       });
     },
-    refuse(index) {
-      this.$confirm("是否拒绝退货?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        this.$message({
-          type: "success",
-          message: "已拒绝退货"
-        });
-        this.list[index].orderStatus = 0;
+    submitRejectReturn() {
+      this.returningOrder.rows.splice(this.returningOrder.index, 1);
+      this.rejectReturnDialogVisiable = false;
+      this.$message({
+        message: "拒绝退款成功！",
+        type: "success"
       });
     }
   }
@@ -109,30 +131,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.box-card {
-  width: 1000px;
-}
-
-.text {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  width: 300px;
-}
-
-.container {
-  display: flex;
-}
-
-.buttons {
-  width: 70px;
-  height: 40px;
-}
-
-.infoContainer {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
+.return-orders-card {
+  width: 960px;
+  margin: 80px 0;
 }
 </style>

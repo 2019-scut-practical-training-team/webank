@@ -6,7 +6,11 @@
       </div>
       <div v-for="pet in petList" :key="pet.petId" class="pet-market-card">
         <el-card :body-style="{ padding: '0px' }">
-          <el-image :src="pet.petImg" alt="Image" class="pet-market-img"></el-image>
+          <el-image
+            :src="pet.petImg"
+            alt="Image"
+            class="pet-market-img"
+          ></el-image>
           <div class="pet-market-info">
             <div style="font-size: 23px">{{ pet.petName }}</div>
             <div>{{ pet.petType }}</div>
@@ -18,16 +22,23 @@
               :type="checkOwner(pet.owner).type"
               :disabled="checkOwner(pet.owner).disabled"
               @click="purchaseConfirmDialogVisiable = true"
-            >{{checkOwner(pet.owner).text}}</el-button>
+              >{{ checkOwner(pet.owner).text }}</el-button
+            >
           </div>
         </el-card>
       </div>
     </el-card>
-    <el-dialog :visible.sync="purchaseConfirmDialogVisiable" width="300px" center>
+    <el-dialog
+      :visible.sync="purchaseConfirmDialogVisiable"
+      width="300px"
+      center
+    >
       <div>是否确认购买？</div>
       <span slot="footer">
         <el-button type="primary" @click="handlePurchase()">确认</el-button>
-        <el-button @click="purchaseConfirmDialogVisiable = false">取消</el-button>
+        <el-button @click="purchaseConfirmDialogVisiable = false"
+          >取消</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -133,7 +144,7 @@ export default {
       this.$message({
         message: "购买成功！",
         type: "success"
-      })
+      });
     }
   }
 };

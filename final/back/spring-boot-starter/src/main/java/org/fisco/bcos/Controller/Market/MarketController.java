@@ -33,7 +33,7 @@ public class MarketController {
     @RequestMapping("/refund")
     public JSONObject refund(@RequestBody String s) throws Exception {
         JSONObject object = JSONObject.parseObject(s);
-        return refundService.refund(object.getString("orderId"));
+        return refundService.refund(object.getString("orderId"), object.getInteger("op"));
     }
 
     @RequestMapping("/pets")

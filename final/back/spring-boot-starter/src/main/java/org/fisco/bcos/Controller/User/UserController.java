@@ -82,7 +82,7 @@ public class UserController {
     @RequestMapping("/return")
     public JSONObject returnOrder(@RequestBody String s) throws Exception{
         JSONObject object = JSONObject.parseObject(s);
-        return returnService.returnOrder(object.getString("key"),object.getInteger("orderId"),object.getString("reason"));
+        return returnService.returnOrder(object.getString("key"),object.getString("orderId"),object.getString("reason"));
     }
 
 

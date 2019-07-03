@@ -147,14 +147,15 @@ contract OrderContract is DataProcess{
         }
         return temp;
     }
+
     
     
     //申请退货
     //输入 订单id 退货原因
-    function applyForReturn(string _orderId, string _reason) public {
+    function applyForReturn() public {
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
-                //判断申请者为买方且订单状态为可退货
+                判断申请者为买方且订单状态为可退货
                 require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
                 require(orderList[i].orderStatus == 0, "This order can't be return!");
                 require(MK.getPetOwner(orderList[i].petId)==msg.sender);

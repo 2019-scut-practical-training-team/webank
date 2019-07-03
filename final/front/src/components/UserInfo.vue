@@ -346,7 +346,6 @@
 </template>
 
 <script>
-import { setTimeout } from "timers";
 export default {
   name: "UserInfo",
   data() {
@@ -367,10 +366,10 @@ export default {
       changePetStatusDialogVisiable: false,
       returnPetDialogVisiable: false,
       address: "",
-      balance: 5000,
+      balance: 10001,
       balancePercentage: 0,
       balanceStatus: "",
-      petCount: 10,
+      petCount: 20,
       petCountPercentage: 0,
       petCountStatus: "",
       petList: [
@@ -657,6 +656,12 @@ export default {
           return false;
         }
       });
+    },
+    getBalanceLimit() {
+      return Math.ceil(this.balance / 5000) * 5000;
+    },
+    getPetCountLimit() {
+      return Math.ceil(this.petCount / 10) * 10;
     }
   },
   created() {
@@ -664,10 +669,14 @@ export default {
     this.address = sessionStorage.getItem("address");
 
     this.balancePercentage =
-      this.balance / 500 > 100 ? 100 : this.balance / 500;
+      this.balance / this.getBalanceLimit() > 1
+        ? 100
+        : (this.balance / this.getBalanceLimit()) * 100;
 
     this.petCountPercentage =
-      this.petCount / 0.2 > 100 ? 100 : this.petCount / 0.2;
+      this.petCount / this.getPetCountLimit() > 1
+        ? 100
+        : (this.petCount / this.getPetCountLimit()) * 100;
   }
 };
 </script>

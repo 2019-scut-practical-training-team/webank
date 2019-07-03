@@ -33,13 +33,10 @@ public class RefundService implements IRefundService {
             transactionReceipt = orderContract.acceptReturn(orderid).send();
 
         JSONObject send = new JSONObject();
-        System.out.println(transactionReceipt.getStatus());
-        if (transactionReceipt.equals("0x0")){
-            System.out.println(" 0x0 should go in");
+        if (transactionReceipt.getStatus().equals("0x0")){
             send.put("checked",true);
         }
-        else if (transactionReceipt.equals("0x16")){
-            System.out.println("0x16 should go in");
+        else if (transactionReceipt.getStatus().equals("0x16")){
             send.put("checked",false);
         }
         else

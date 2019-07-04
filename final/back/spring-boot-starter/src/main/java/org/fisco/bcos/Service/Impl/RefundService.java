@@ -31,6 +31,7 @@ public class RefundService implements IRefundService {
                 send.put("checked",true);
             }
             else if (transactionReceipt.getStatus().equals("0x16")){
+                orderContract.rejectReturn(orderid).send();
                 send.put("checked",false);
             }
             return send;

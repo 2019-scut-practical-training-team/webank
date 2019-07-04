@@ -34,7 +34,7 @@ public class CheckDao implements ICheckDao {
         JSONObject send = new JSONObject();
         JSONArray jsonArray = new JSONArray();
 
-        List index = orderContract.userGetOrderId().send();
+        List index = orderContract.userGetOrderIndex().send();
         for (int i = 0; i < index.size(); i++){
             JSONObject jsonObject = new JSONObject();
 

@@ -1,6 +1,5 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
-//import "./OrderContract.sol";
 
 interface OrderContract{
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) external;
@@ -75,7 +74,7 @@ contract Market is DataProcess{
         petIdToOwner[_id] = _owner;
     }
     
-    //设置order合约地址，用于调用其中的函数
+    //设置order合约地址，用于调用其中的函数，合约部署成功后调用
     function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
         OD = OrderContract(_orderAddress);
     }
@@ -114,24 +113,8 @@ contract Market is DataProcess{
             }
         }
     }
-    function getPetOwner(string _petId) public view returns(address){
-        for(uint i=0;i<petList.length;i++){
-            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
-                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
-                require(msg.sender==petList[i].Owner || petList[i].petStatus==1);
-                return petList[i].Owner;
-            }
-        }
-    }
-    function orderGetPetOwner(string _petId, address _caller) public view returns(address){
-        for(uint i=0;i<petList.length;i++){
-            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
-                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
-                require(_caller==petList[i].Owner || petList[i].petStatus==1);
-                return petList[i].Owner;
-            }
-        }
-    }
+    
+    
 
 
 
@@ -163,6 +146,30 @@ contract Market is DataProcess{
     //通过地址获取余额
     function getBalance(address _address) public view returns (uint) {
         return Balance[_address];
+    }
+    //返回用户是否创建过宠物的信息
+    function getCreatedPet() public view returns(uint8) {
+        return createdPet[msg.sender];
+    }
+    //获取宠物主人地址
+    function getPetOwner(string _petId) public view returns(address){
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
+                require(msg.sender==petList[i].Owner || petList[i].petStatus==1);
+                return petList[i].Owner;
+            }
+        }
+    }
+    //获取宠物主人地址，用于判断退货时宠物是否在发起者手上，order合约调用
+    function orderGetPetOwner(string _petId, address _caller) public view returns(address){
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
+                require(_caller==petList[i].Owner || petList[i].petStatus==1);
+                return petList[i].Owner;
+            }
+        }
     }
 
 
@@ -289,4 +296,4 @@ contract Market is DataProcess{
         }
     }
     
-}
+} 

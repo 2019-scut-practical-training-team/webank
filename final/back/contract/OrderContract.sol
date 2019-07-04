@@ -1,6 +1,5 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
-//import "./Market.sol";
 
 interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
@@ -40,7 +39,7 @@ contract OrderContract is DataProcess{
     
     
     //内部管理员函数：
-    //设置market合约地址
+    //设置market合约地址，合约部署成功后调用
     function setMarketAddress(address _mkAddress) public isAdmin(msg.sender){
         MK = Market(_mkAddress);
     }
@@ -57,10 +56,12 @@ contract OrderContract is DataProcess{
     //外部可调用函数：
 
     //订单相关：
+    
     //公用获得订单函数，买方，卖方，管理员可看
     //输入订单下标
     //返回 订单id，买家，卖家，时间，宠物id，宠物价格，订单状态
     function getOrderByIndex(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
+        //卖家，买家，管理员可看
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
     }
@@ -134,7 +135,7 @@ contract OrderContract is DataProcess{
     //用户部分：
     //用户获得自己的订单列表
     //返回订单下标数组
-    function userGetOrderId() public view returns(uint[]){
+    function userGetOrderIndex() public view returns(uint[]){
         uint count=0;
         for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){

@@ -1,6 +1,7 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
 
+//接口，调用market合约函数
 interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
     function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
@@ -19,7 +20,7 @@ contract OrderContract is DataProcess{
         uint8 orderStatus;
         string returnReason;
     }
-    //声明变量：market合约地址，管理员地址，订单列表，订单id
+    //声明变量：market合约地址，管理员地址，订单列表，订单id计数器
     Market MK;
     address private adminAddress;
     Order[] public orderList;
@@ -37,14 +38,13 @@ contract OrderContract is DataProcess{
         _;
     }
     
-    
-    //内部管理员函数：
     //设置market合约地址，合约部署成功后调用
     function setMarketAddress(address _mkAddress) public isAdmin(msg.sender){
         MK = Market(_mkAddress);
     }
 
 
+    //market合约调用的函数：
     //创建一个新订单，market管理员调用
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
         orderList.push(Order(getIntToString(orderIdNum), _buyer, _seller, _time, _petId, _petPrice, 0, ""));
@@ -65,6 +65,7 @@ contract OrderContract is DataProcess{
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
     }
+    
     //返回退款原因
     function getReturnReasonByIndex(uint _orderIndex) view public isAdmin(msg.sender) returns(string) {
         return (orderList[_orderIndex].returnReason);

@@ -1,11 +1,13 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
 
+//接口，调用order合约函数
 interface OrderContract{
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) external;
 }
 
 contract Market is DataProcess{
+    //pet结构体
     struct Pet {
         string petName;
         string petId;
@@ -17,7 +19,7 @@ contract Market is DataProcess{
         address Owner;
     }
 
-    //全局变量声明：管理员地址，order合约地址，在售宠物，订单列表
+    //全局变量声明：管理员地址，order合约地址，宠物id计数器，宠物列表
     address private adminAddress;
     OrderContract OD;
     uint petIdNum=1;
@@ -61,7 +63,7 @@ contract Market is DataProcess{
 
 
 
-    //内部调用函数及只有管理员可调用的函数：
+    //内部调用函数 及 order合约调用的函数：
     //初始化用户余额以及是否创建过宠物参数
     function initUser() private {
         createdPet[msg.sender] = 0;
@@ -74,12 +76,6 @@ contract Market is DataProcess{
         petIdToOwner[_id] = _owner;
     }
     
-    //设置order合约地址，用于调用其中的函数，合约部署成功后调用
-    function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
-        OD = OrderContract(_orderAddress);
-    }
-
-
     //支付对应金额，内部调用
     function pay(address _from, address _to, uint16 _price) private {
         require(_to != 0x0);
@@ -89,6 +85,11 @@ contract Market is DataProcess{
         Balance[_from] -= _price;
         Balance[_to] += _price;
         assert(Balance[_from] + Balance[_to] == previousBalances);
+    }
+    
+    //设置order合约地址，用于调用其中的函数，合约部署成功后调用
+    function setOrderAddress(address _orderAddress) public isAdmin(msg.sender) {
+        OD = OrderContract(_orderAddress);
     }
 
     //管理员使用的转账函数，用于退货方面的操作
@@ -114,6 +115,17 @@ contract Market is DataProcess{
         }
     }
     
+    //获取宠物主人地址，用于判断退货时宠物是否在发起者手上，order合约调用
+    function orderGetPetOwner(string _petId, address _caller) public view returns(address){
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
+                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
+                require(_caller==petList[i].Owner || petList[i].petStatus==1);
+                return petList[i].Owner;
+            }
+        }
+    }
+    
     
 
 
@@ -133,7 +145,7 @@ contract Market is DataProcess{
         userIden[msg.sender] = 1;
     }
 
-    //获取用户身份，未注册用户是0,普通用户是1,管理员是2
+    //获取用户身份，未注册用户是0,普通用户是1,管理员是2，同时返回公钥地址
     function getUserIden() public view returns (uint8, address){
         return (userIden[msg.sender], msg.sender);
     }
@@ -161,21 +173,8 @@ contract Market is DataProcess{
             }
         }
     }
-    //获取宠物主人地址，用于判断退货时宠物是否在发起者手上，order合约调用
-    function orderGetPetOwner(string _petId, address _caller) public view returns(address){
-        for(uint i=0;i<petList.length;i++){
-            if(keccak256(abi.encodePacked(petList[i].petId))==keccak256(abi.encodePacked(_petId))){
-                //只有宠物拥有者可查看，宠物上架则其他用户也可查看宠物拥有者
-                require(_caller==petList[i].Owner || petList[i].petStatus==1);
-                return petList[i].Owner;
-            }
-        }
-    }
-
-
-
-
-
+    
+    
 
     //宠物相关：
     //输入 宠物下标
@@ -283,6 +282,7 @@ contract Market is DataProcess{
     }
 
     //修改宠物信息
+    //可修改 宠物名字，宠物类型，宠物价格，宠物图片地址，宠物介绍
     function changePetInfo(string _petId, string _name, string _type, uint16 _price, string _img, string _intro) public {
         require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
         for(uint i=0;i<petList.length;i++){
@@ -296,4 +296,4 @@ contract Market is DataProcess{
         }
     }
     
-} 
+}

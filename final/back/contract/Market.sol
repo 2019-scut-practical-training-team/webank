@@ -134,8 +134,8 @@ contract Market is DataProcess{
     }
 
     //获取用户身份，未注册用户是0,普通用户是1,管理员是2
-    function getUserIden() public view returns (uint8){
-        return userIden[msg.sender];
+    function getUserIden() public view returns (uint8, address){
+        return (userIden[msg.sender], msg.sender);
     }
 
     //获取调用者的余额

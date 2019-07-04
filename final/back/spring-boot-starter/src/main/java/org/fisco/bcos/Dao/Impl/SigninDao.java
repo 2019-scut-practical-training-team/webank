@@ -10,9 +10,13 @@ import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.EncryptType;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
+import org.fisco.bcos.web3j.tuples.generated.Tuple2;
+import org.fisco.bcos.web3j.tuples.generated.Tuple7;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigInteger;
 
 @Repository
 public class SigninDao implements ISigninDao {
@@ -36,12 +40,14 @@ public class SigninDao implements ISigninDao {
                 new StaticGasProvider(
                         GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
 
+        Tuple2<BigInteger, String> t = market.getUserIden().send();
 
-        int identity = market.getUserIden().send().intValue();
+        int identity = t.getValue1().intValue();
+        String address = t.getValue2();
 
         JSONObject json = new JSONObject();
         json.put("identity",identity);
-        json.put("address",credentials.getEcKeyPair().getPublicKey().toString(16));
+        json.put("address",address);
 
         return json;
     }

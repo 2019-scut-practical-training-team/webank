@@ -27,7 +27,7 @@ public class RefundDao implements IRefundDao {
     private Variables variables;
 
     @Override
-    public TransactionReceipt refund(String orderid, int op) throws Exception {
+    public JSONObject refund(String orderid, int op) throws Exception {
         Credentials credentials = GenCredential.create(variables.getAdmin());
         OrderContract orderContract = OrderContract.load(variables.getOrder(), web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
         TransactionReceipt transactionReceipt;
@@ -38,6 +38,15 @@ public class RefundDao implements IRefundDao {
             transactionReceipt = orderContract.acceptReturn(orderid).send();
 
 
-        return transactionReceipt;
+        JSONObject send = new JSONObject();
+
+        if (transactionReceipt.getStatus().equals("0x0")){
+            send.put("checked",true);
+        }
+        else if (transactionReceipt.getStatus().equals("0x16")){
+            orderContract.rejectReturn(orderid).send();
+            send.put("checked",false);
+        }
+        return send;
     }
 }

@@ -14,7 +14,9 @@
       <el-menu-item index="1" class="el-menu-item-self">宠物市场</el-menu-item>
       <el-menu-item index="0" class="el-menu-item-self">退货信息</el-menu-item>
     </el-menu>
-    <component :is="activeComponent" class="user-container"></component>
+    <keep-alive>
+      <component :is="activeComponent" class="user-container"></component>
+    </keep-alive>
   </div>
 </template>
 

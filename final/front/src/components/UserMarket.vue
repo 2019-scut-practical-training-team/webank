@@ -21,7 +21,7 @@
             <el-button
               :type="checkOwner(pet.owner).type"
               :disabled="checkOwner(pet.owner).disabled"
-              @click="purchaseConfirmDialogVisiable = true"
+              @click="handlePurchasePet(pet.petId)"
               >{{ checkOwner(pet.owner).text }}</el-button
             >
           </div>
@@ -35,7 +35,9 @@
     >
       <div>是否确认购买？</div>
       <span slot="footer">
-        <el-button type="primary" @click="handlePurchase()">确认</el-button>
+        <el-button type="primary" @click="submintPurchasePetForm()"
+          >确认</el-button
+        >
         <el-button @click="purchaseConfirmDialogVisiable = false"
           >取消</el-button
         >
@@ -50,80 +52,56 @@ export default {
   data() {
     return {
       purchaseConfirmDialogVisiable: false,
-      petList: [
-        {
-          petId: 1,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petImg: "",
-          petIntro: "这是一只狗",
-          owner: "123"
-        },
-        {
-          petId: 2,
-          petType: "猫",
-          petPrice: 100,
-          petName: "jerry",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫",
-          owner: "123456"
-        },
-        {
-          petId: 3,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1562062837618&di=08ce468cf6dfdb78b6a2885573fb92b9&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fphotoblog%2F7%2F3%2F6%2F2%2F7362735%2F200810%2F3%2F1223049123211_mthumb.jpg",
-          petIntro: "这是一只狗",
-          owner: "123456"
-        },
-        {
-          petId: 4,
-          petType: "猫",
-          petPrice: 100,
-          petName: "jerry",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫",
-          owner: "123"
-        },
-        {
-          petId: 5,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只狗",
-          owner: "123"
-        },
-        {
-          petId: 6,
-          petType: "猫",
-          petPrice: 100,
-          petName: "jerry",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫",
-          owner: "123"
-        },
-        {
-          petId: 7,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只狗",
-          owner: "123"
-        }
-      ]
+      petList: null,
+      purchasePetForm: {
+        petId: null
+      }
     };
   },
   methods: {
+    submintPurchasePetForm() {
+      this.$axios
+        .post(this.$axios.baseURL + "/api/user/buy", {
+          key: sessionStorage.getItem("privateKey"),
+          petId: this.purchasePetForm.petId
+        })
+        .then(response => {
+          if (response.data.checked == true) {
+            // 改变宠物的持有者
+            // for (let pet of this.petList) {
+            //   if (pet.petId === this.purchasePetForm.petId) {
+            //     pet.owner = sessionStorage.getItem("address");
+            //     break;
+            //   }
+            // }
+            // 关闭二次确认窗口
+            this.purchaseConfirmDialogVisiable = false;
+            // 显示成功信息
+            this.$message({
+              message: "购买宠物成功！",
+              type: "success"
+            });
+            // 刷新页面
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          } else {
+            this.purchaseConfirmDialogVisiable = false;
+            this.$message({
+              message: "购买宠物失败！",
+              type: "error"
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }
+        })
+        .catch();
+    },
+    handlePurchasePet(id) {
+      this.purchasePetForm.petId = id;
+      this.purchaseConfirmDialogVisiable = true;
+    },
     checkOwner(address) {
       if (sessionStorage.getItem("address") == address) {
         return {
@@ -138,14 +116,26 @@ export default {
           disabled: false
         };
       }
-    },
-    handlePurchase() {
-      this.purchaseConfirmDialogVisiable = false;
-      this.$message({
-        message: "购买成功！",
-        type: "success"
-      });
     }
+  },
+  created() {
+    this.$axios
+      .get(this.$axios.baseURL + "/api/market/pets")
+      .then(response => {
+        window.console.log(response);
+        this.petList = response.data.petsList;
+        this.$message({
+          message: "获取在售宠物列表成功!",
+          type: "success"
+        });
+      })
+      .catch(error => {
+        window.console.log(error);
+        this.$message({
+          message: "获取在售宠物列表失败!",
+          type: "error"
+        });
+      });
   }
 };
 </script>
@@ -165,6 +155,7 @@ export default {
 }
 .pet-market-info {
   padding: 14px;
+  height: 120px;
 }
 .pet-market-img {
   width: @pet-img-width;

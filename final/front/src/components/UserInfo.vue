@@ -6,7 +6,11 @@
       </div>
       <el-row class="el-row-self">
         <el-col :span="4">账户地址：</el-col>
-        <el-col :span="20">{{ address }}</el-col>
+        <el-col :span="20"
+          ><span id="userAddress" style="word-break: break-all">{{
+            address
+          }}</span></el-col
+        >
       </el-row>
       <el-row class="el-row-self">
         <el-col :span="4">账号余额：</el-col>
@@ -65,7 +69,7 @@
           </div>
         </el-card>
       </div>
-      <div class="pet-card">
+      <div class="pet-card" v-if="canCreateNewPet">
         <el-card :body-style="{ padding: '0px' }">
           <div class="new-pet" @click="newPetDialogVisiable = true">
             <i class="el-icon-plus new-pet-icon"></i>
@@ -114,12 +118,16 @@
               size="small"
               :type="handleOrderStatus(scope.row.orderStatus)"
               @click="handleOrderClick(scope.row.orderId)"
-              :disabled="scope.row.orderStatus === 0 ? false : true"
+              :disabled="
+                isOrderButtonDisabled(
+                  scope.row.orderStatus,
+                  scope.row.orderBuyer
+                )
+              "
             >
-              <span v-if="scope.row.orderStatus === 0">申请退货</span>
-              <span v-else-if="scope.row.orderStatus === 1">正在退货</span>
-              <span v-else-if="scope.row.orderStatus === 2">退货成功</span>
-              <span v-else-if="scope.row.orderStatus === 3">退货失败</span>
+              <span>{{
+                getOrderButtonText(scope.row.orderStatus, scope.row.orderBuyer)
+              }}</span>
             </el-button>
           </template>
         </el-table-column>
@@ -136,10 +144,10 @@
           label="名称"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="name"
+          prop="petName"
         >
           <el-input
-            v-model="newPetForm.name"
+            v-model="newPetForm.petName"
             placeholder="请输入你的宠物的名字"
             maxlength="6"
             show-word-limit
@@ -149,9 +157,9 @@
           label="类型"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="type"
+          prop="petType"
         >
-          <el-select v-model="newPetForm.type" placeholder="请选择">
+          <el-select v-model="newPetForm.petType" placeholder="请选择">
             <el-option
               v-for="petType in petTypes"
               :key="petType"
@@ -164,10 +172,10 @@
           label="价格"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="price"
+          prop="petPrice"
         >
           <el-input
-            v-model.number="newPetForm.price"
+            v-model.number="newPetForm.petPrice"
             type="number"
             onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
             max="5000"
@@ -178,10 +186,10 @@
           label="图片链接"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="imgURL"
+          prop="petImg"
         >
           <el-input
-            v-model="newPetForm.imgURL"
+            v-model="newPetForm.petImg"
             placeholder="请输入你的宠物图片的URL"
           ></el-input>
         </el-form-item>
@@ -190,10 +198,10 @@
           :label-width="formLabelWidth"
           class="pet-form-item"
           style="margin-bottom: 0"
-          prop="intro"
+          prop="petIntro"
         >
           <el-input
-            v-model="newPetForm.intro"
+            v-model="newPetForm.petIntro"
             placeholder="请输入你对该宠物的描述"
             maxlength="14"
             show-word-limit
@@ -222,10 +230,10 @@
           label="名称"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="name"
+          prop="petName"
         >
           <el-input
-            v-model="changePetInfoForm.name"
+            v-model="changePetInfoForm.petName"
             placeholder="请输入你的宠物的名字"
             maxlength="6"
             show-word-limit
@@ -235,9 +243,9 @@
           label="类型"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="type"
+          prop="petType"
         >
-          <el-select v-model="changePetInfoForm.type" placeholder="请选择">
+          <el-select v-model="changePetInfoForm.petType" placeholder="请选择">
             <el-option
               v-for="petType in petTypes"
               :key="petType"
@@ -250,10 +258,10 @@
           label="价格"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="price"
+          prop="petPrice"
         >
           <el-input
-            v-model.number="changePetInfoForm.price"
+            v-model.number="changePetInfoForm.petPrice"
             type="number"
             onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))"
             max="5000"
@@ -264,10 +272,10 @@
           label="图片链接"
           :label-width="formLabelWidth"
           class="pet-form-item"
-          prop="imgURL"
+          prop="petImg"
         >
           <el-input
-            v-model="changePetInfoForm.imgURL"
+            v-model="changePetInfoForm.petImg"
             placeholder="请输入你的宠物图片的URL"
           ></el-input>
         </el-form-item>
@@ -276,10 +284,10 @@
           :label-width="formLabelWidth"
           class="pet-form-item"
           style="margin-bottom: 0"
-          prop="intro"
+          prop="petIntro"
         >
           <el-input
-            v-model="changePetInfoForm.intro"
+            v-model="changePetInfoForm.petIntro"
             placeholder="请输入你对该宠物的描述"
             maxlength="14"
             show-word-limit
@@ -346,6 +354,7 @@
 </template>
 
 <script>
+import { setTimeout } from "timers";
 export default {
   name: "UserInfo",
   data() {
@@ -365,154 +374,30 @@ export default {
       changePetInfoDialogVisiable: false,
       changePetStatusDialogVisiable: false,
       returnPetDialogVisiable: false,
+      canCreateNewPet: true,
       address: "",
-      balance: 10001,
+      balance: 0,
       balancePercentage: 0,
       balanceStatus: "",
-      petCount: 20,
+      petCount: 0,
       petCountPercentage: 0,
       petCountStatus: "",
-      petList: [
-        {
-          petId: 1,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petStatus: 1,
-          petImg: "",
-          petIntro: "这是一只狗啊啊啊啊啊啊啊啊啊"
-        },
-        {
-          petId: 2,
-          petType: "猫",
-          petPrice: 200,
-          petName: "jerry",
-          petStatus: 0,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫"
-        },
-        {
-          petId: 3,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petStatus: 1,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804170123&di=1ddf8a5e1d4345013ee0cd36ad3a1ba9&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1709%2F132-1FZ2121051.jpg",
-          petIntro: "这是一只狗"
-        },
-        {
-          petId: 4,
-          petType: "猫",
-          petPrice: 200,
-          petName: "jerry",
-          petStatus: 0,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫"
-        },
-        {
-          petId: 5,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petStatus: 1,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804170123&di=1ddf8a5e1d4345013ee0cd36ad3a1ba9&imgtype=0&src=http%3A%2F%2Fuploads.oh100.com%2Fallimg%2F1709%2F132-1FZ2121051.jpg",
-          petIntro: "这是一只狗"
-        },
-        {
-          petId: 6,
-          petType: "猫",
-          petPrice: 200,
-          petName: "jerry",
-          petStatus: 0,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561804109660&di=1c11266cac314c21f719f27e6225e3ee&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201505%2F07%2F20150507214556_JYinM.jpeg",
-          petIntro: "这是一只猫"
-        },
-        {
-          petId: 7,
-          petType: "狗",
-          petPrice: 100,
-          petName: "tom",
-          petStatus: 1,
-          petImg:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1561812530148&di=d31285463da7b5651d88a19ea5a4c4f7&imgtype=0&src=http%3A%2F%2Fwww.pig66.com%2Fuploadfile%2F2018%2F0110%2F20180110102944250.jpg",
-          petIntro: "这是一只狗"
-        }
-      ],
-      orderList: [
-        {
-          orderId: 1,
-          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 0
-        },
-        {
-          orderId: 2,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 2,
-          petPrice: 3000,
-          orderStatus: 1
-        },
-        {
-          orderId: 3,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 2
-        },
-        {
-          orderId: 4,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 2,
-          petPrice: 3000,
-          orderStatus: 3
-        },
-        {
-          orderId: 5,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 0
-        },
-        {
-          orderId: 6,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 2,
-          petPrice: 3000,
-          orderStatus: 0
-        }
-      ],
+      petList: null,
+      orderList: null,
       newPetForm: {
-        name: "",
-        type: "",
-        price: 2500,
-        imgURL: "",
-        intro: ""
+        petType: "",
+        petPrice: 2500,
+        petName: "",
+        petImg: "",
+        petIntro: ""
       },
       changePetInfoForm: {
-        id: null,
-        name: "",
-        type: "",
-        price: 0,
-        imgURL: "",
-        intro: ""
+        petId: null,
+        petType: "",
+        petPrice: 0,
+        petName: "",
+        petImg: "",
+        petIntro: ""
       },
       changePetStatusForm: {
         id: null,
@@ -525,17 +410,19 @@ export default {
       formLabelWidth: "80px",
       petTypes: ["猫", "狗", "兔子", "恐龙", "鸟"],
       petRules: {
-        name: [
+        petName: [
           { required: true, message: "请输入宠物的名称", trigger: "blur" }
         ],
-        type: [
+        petType: [
           { required: true, message: "请选择宠物的类型", trigger: "blur" }
         ],
-        price: [{ required: true, validator: validatePrice, trigger: "blur" }],
-        imgURL: [
+        petPrice: [
+          { required: true, validator: validatePrice, trigger: "blur" }
+        ],
+        petImg: [
           { required: true, message: "请输入宠物图片的链接", trigger: "blur" }
         ],
-        intro: [
+        petIntro: [
           { required: true, message: "请输入对宠物的描述", trigger: "blur" }
         ]
       },
@@ -556,28 +443,45 @@ export default {
     submitNewPetForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$message({
-            message: "新建成功",
-            type: "success"
-          });
-          // 关闭窗口
-          this.newPetDialogVisiable = false;
-          // 重置为初始化状态
-          this.$refs[formName].resetFields();
+          this.$axios
+            .post(this.$axios.baseURL + "/api/user/pet/createpet", {
+              key: sessionStorage.getItem("privateKey"),
+              pet: this.newPetForm
+            })
+            .then(response => {
+              if (response.data.checked == true) {
+                this.newPetDialogVisiable = false;
+                this.$message({
+                  message: "新建宠物成功！",
+                  type: "success"
+                });
+                this.$refs[formName].resetFields();
+                // 重新获取宠物列表
+                setTimeout(this.getUserPetList(), 1000);
+              } else {
+                this.newPetDialogVisiable = false;
+                this.$message({
+                  message: "新建宠物失败！",
+                  type: "error"
+                });
+                this.$refs[formName].resetFields();
+              }
+            })
+            .catch();
         } else {
-          window.console.log("error submit");
+          window.console.log("表单验证失败！");
           return false;
         }
       });
     },
     changePetInfo(pet) {
       // 显示修改前的信息
-      this.changePetInfoForm.id = pet.petId;
-      this.changePetInfoForm.name = pet.petName;
-      this.changePetInfoForm.type = pet.petType;
-      this.changePetInfoForm.price = pet.petPrice;
-      this.changePetInfoForm.imgURL = pet.petImg;
-      this.changePetInfoForm.intro = pet.petIntro;
+      this.changePetInfoForm.petId = pet.petId;
+      this.changePetInfoForm.petType = pet.petType;
+      this.changePetInfoForm.petPrice = pet.petPrice;
+      this.changePetInfoForm.petName = pet.petName;
+      this.changePetInfoForm.petImg = pet.petImg;
+      this.changePetInfoForm.petIntro = pet.petIntro;
 
       // 显示修改信息的对话框
       this.changePetInfoDialogVisiable = true;
@@ -585,17 +489,42 @@ export default {
     submintChangePetInfo(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // 关闭窗口
-          this.changePetInfoDialogVisiable = false;
-
-          this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          // 重置为初始化状态
-          this.$refs[formName].resetFields();
+          this.$axios
+            .post(this.$axios.baseURL + "/api/user/pet/changeinfo", {
+              key: sessionStorage.getItem("privateKey"),
+              pet: this.changePetInfoForm
+            })
+            .then(response => {
+              if (response.data.checked === true) {
+                this.changePetInfoDialogVisiable = false;
+                this.$message({
+                  message: "修改成功！",
+                  type: "success"
+                });
+                // 重置为初始化状态
+                this.$refs[formName].resetFields();
+                // 重新获取宠物列表
+                setTimeout(this.getUserPetList(), 1000);
+                setTimeout(this.getCanCreateNewPet(), 1000);
+              } else {
+                this.changePetInfoDialogVisiable = false;
+                this.$message({
+                  message: "修改失败！",
+                  type: "error"
+                });
+                // 重置为初始化状态
+                this.$refs[formName].resetFields();
+              }
+            })
+            .catch(error => {
+              window.console.log(error);
+              this.$message({
+                message: "修改失败！请重试。",
+                type: "warning"
+              });
+            });
         } else {
-          window.console.log("error submit");
+          window.console.log("表单检测不通过！");
           return false;
         }
       });
@@ -608,25 +537,166 @@ export default {
       this.changePetStatusDialogVisiable = true;
     },
     submitChangePetStatus() {
-      setTimeout(() => {
-        for (let pet of this.petList) {
-          if (pet.petId === this.changePetStatusForm.id) {
-            pet.petStatus = pet.petStatus ? 0 : 1;
-            break;
+      let url;
+      let move;
+      if (this.changePetStatusForm.status === 0) {
+        url = "/api/user/pet/sell";
+        move = "上架";
+      } else {
+        url = "/api/user/pet/unsell";
+        move = "下架";
+      }
+
+      this.$axios
+        .post(this.$axios.baseURL + url, {
+          key: sessionStorage.getItem("privateKey"),
+          petId: this.changePetStatusForm.id
+        })
+        .then(response => {
+          // 成功下架or上架
+          if (response.data.checked == true) {
+            // 修改状态
+            setTimeout(() => {
+              for (let pet of this.petList) {
+                if (pet.petId === this.changePetStatusForm.id) {
+                  pet.petStatus = pet.petStatus ? 0 : 1;
+                  break;
+                }
+              }
+            }, 0);
+            // 关闭二次确认窗口
+            this.changePetStatusDialogVisiable = false;
+            // 发生成功消息
+            this.$message({
+              message: move + "成功！",
+              type: "success"
+            });
+          } else {
+            this.changePetStatusDialogVisiable = false;
+            this.$message({
+              message: move + "失败！",
+              type: "error"
+            });
           }
-        }
-      }, 0);
-      this.changePetStatusDialogVisiable = false;
-      this.$message({
-        message:
-          this.changePetStatusForm.status === 0 ? "上架成功" : "下架成功",
-        type: "success"
-      });
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: move + "失败！请重试。",
+            type: "warning"
+          });
+        });
     },
+    // 准备退货所需的数据
     handleOrderClick(id) {
       this.returnPetForm.orderId = id;
 
       this.returnPetDialogVisiable = true;
+    },
+    // 处理退货表单
+    submitReturnPet(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.$axios
+            .post(this.$axios.baseURL + "/api/user/return", {
+              key: sessionStorage.getItem("privateKey"),
+              orderId: this.returnPetForm.orderId,
+              reason: this.returnPetForm.reason
+            })
+            .then(response => {
+              if (response.data.checked == true) {
+                setTimeout(() => {
+                  for (let order in this.orderList) {
+                    if (order.orderId === this.returnPetForm.orderId) {
+                      order.petStatus = 1;
+                      break;
+                    }
+                  }
+                }, 0);
+                this.returnPetDialogVisiable = false;
+                this.$message({
+                  message: "申请退款成功！",
+                  type: "success"
+                });
+                this.$refs[formName].resetFields();
+              } else {
+                this.returnPetDialogVisiable = false;
+                this.$message({
+                  message: "申请退款失败！",
+                  type: "error"
+                });
+                this.$refs[formName].resetFields();
+              }
+            })
+            .catch(error => {
+              window.console.log(error);
+              this.$message({
+                message: "申请退款失败！请重试。",
+                type: "warning"
+              });
+            });
+        } else {
+          window.console.log("表单检验失败！");
+          return false;
+        }
+      });
+    },
+    // 获取余额进度条最大值
+    getBalanceLimit() {
+      if (this.balance === 0) {
+        return 10000;
+      } else {
+        return Math.ceil(this.balance / 5000) * 5000;
+      }
+    },
+    // 获取宠物数量进度条最大值
+    getPetCountLimit() {
+      if (this.petCount === 0) {
+        return 10;
+      } else {
+        return Math.ceil(this.petCount / 10) * 10;
+      }
+    },
+    getUserPetList() {
+      this.$axios
+        .post(this.$axios.baseURL + "/api/user/pet/petslist", {
+          key: sessionStorage.getItem("privateKey")
+        })
+        .then(response => {
+          this.petList = response.data.petsList;
+          this.petCount = this.petList.length;
+          // 设置进度条的百分比
+          this.petCountPercentage =
+            this.petCount / this.getPetCountLimit() > 1
+              ? 100
+              : (this.petCount / this.getPetCountLimit()) * 100;
+          this.$message({
+            message: "获取宠物列表成功！",
+            type: "success"
+          });
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: "获取宠物列表失败！",
+            type: "error"
+          });
+        });
+    },
+    getCanCreateNewPet() {
+      this.$axios
+        .post(this.$axios.baseURL + "/api/user/ifcreated", {
+          key: sessionStorage.getItem("privateKey")
+        })
+        .then(response => {
+          this.canCreateNewPet = response.data.checked;
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: "获取是否已创建过宠物失败！"
+          });
+        });
     },
     handleOrderStatus(status) {
       switch (status) {
@@ -642,42 +712,87 @@ export default {
           return "";
       }
     },
-    submitReturnPet(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.returnPetDialogVisiable = false;
-          this.$message({
-            message: "申请成功",
-            type: "success"
-          });
-          this.$refs[formName].resetFields();
-        } else {
-          window.console.log("error submit!");
-          return false;
-        }
-      });
+    isOrderButtonDisabled(status, buyer) {
+      if (status === 0 && buyer == sessionStorage.getItem("address")) {
+        return false;
+      } else {
+        return true;
+      }
     },
-    getBalanceLimit() {
-      return Math.ceil(this.balance / 5000) * 5000;
-    },
-    getPetCountLimit() {
-      return Math.ceil(this.petCount / 10) * 10;
+    getOrderButtonText(status, buyer) {
+      switch (status) {
+        case 0:
+          if (buyer == sessionStorage.getItem("address")) {
+            return "申请退货";
+          } else {
+            return "无法申请";
+          }
+        case 1:
+          return "正在退货";
+        case 2:
+          return "退货成功";
+        case 3:
+          return "退货失败";
+        default:
+          return "未知状态";
+      }
     }
   },
   created() {
     // 读取地址信息
     this.address = sessionStorage.getItem("address");
+    // 获取账户余额
+    this.$axios
+      .post(this.$axios.baseURL + "/api/user/balance", {
+        key: sessionStorage.getItem("privateKey")
+      })
+      .then(response => {
+        this.balance = response.data.balance;
+        // 设置进度条的百分比
+        this.balancePercentage =
+          this.balance / this.getBalanceLimit() > 1
+            ? 100
+            : (this.balance / this.getBalanceLimit()) * 100;
+        this.$message({
+          message: "获取账户余额成功！",
+          type: "success"
+        });
+      })
+      .catch(error => {
+        window.console.log(error);
+        this.$message({
+          message: "获取账户余额失败！",
+          type: "error"
+        });
+      });
 
-    this.balancePercentage =
-      this.balance / this.getBalanceLimit() > 1
-        ? 100
-        : (this.balance / this.getBalanceLimit()) * 100;
+    // 获取是否已创建过宠物
+    this.getCanCreateNewPet();
 
-    this.petCountPercentage =
-      this.petCount / this.getPetCountLimit() > 1
-        ? 100
-        : (this.petCount / this.getPetCountLimit()) * 100;
-  }
+    // 获取账号宠物列表
+    this.getUserPetList();
+
+    // 获取订单列表
+    this.$axios
+      .post(this.$axios.baseURL + "/api/user/order/check", {
+        key: sessionStorage.getItem("privateKey")
+      })
+      .then(response => {
+        this.orderList = response.data.orderList;
+        this.$message({
+          message: "获取订单列表成功！",
+          type: "success"
+        });
+      })
+      .catch(error => {
+        window.console.log(error);
+        this.$message({
+          message: "获取订单列表失败！",
+          type: "error"
+        });
+      });
+  },
+  computed: {}
 };
 </script>
 
@@ -685,7 +800,7 @@ export default {
 @pet-img-width: 240px;
 @pet-img-height: @pet-img-width;
 .user-info-card {
-  width: 700px;
+  width: 600px;
   margin-top: 50px;
   .el-row-self {
     margin-bottom: 20px;
@@ -703,6 +818,7 @@ export default {
 }
 .pet-info {
   padding: 14px;
+  height: 120px;
 }
 .pet-img {
   width: @pet-img-width;

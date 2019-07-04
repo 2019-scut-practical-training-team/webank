@@ -92,48 +92,7 @@ export default {
     return {
       confirmReturnDialogVisiable: false,
       rejectReturnDialogVisiable: false,
-      orderList: [
-        {
-          orderId: 1,
-          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1,
-          reason: "不要了"
-        },
-        {
-          orderId: 2,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1,
-          reason: "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
-        },
-        {
-          orderId: 3,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1,
-          reason: "不要了"
-        },
-        {
-          orderId: 4,
-          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1,
-          reason: "不要了"
-        }
-      ],
+      orderList: null,
       returningOrder: {
         index: null,
         rows: null
@@ -152,21 +111,88 @@ export default {
       this.rejectReturnDialogVisiable = true;
     },
     submitConfirmReturn() {
-      this.returningOrder.rows.splice(this.returningOrder.index, 1);
-      this.confirmReturnDialogVisiable = false;
-      this.$message({
-        message: "同意退款成功！",
-        type: "success"
-      });
+      // 发送请求，同意退款
+      this.$axios
+        .post(this.$axios.baseURL + "/api/market/refund", {
+          orderId: this.returningOrder.rows[this.returningOrder.index].orderId,
+          op: 0
+        })
+        .then(response => {
+          if (response.data.checked == true) {
+            this.returningOrder.rows.splice(this.returningOrder.index, 1);
+            this.confirmReturnDialogVisiable = false;
+            this.$message({
+              message: "同意退款成功！",
+              type: "success"
+            });
+          } else {
+            this.returningOrder.rows.splice(this.returningOrder.index, 1);
+            this.confirmReturnDialogVisiable = false;
+            this.$message({
+              message: "退款失败！宠物已转手或卖家余额不足！",
+              type: "error"
+            });
+          }
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: "同意退款失败，请重试。",
+            type: "warning"
+          });
+        });
     },
     submitRejectReturn() {
-      this.returningOrder.rows.splice(this.returningOrder.index, 1);
-      this.rejectReturnDialogVisiable = false;
-      this.$message({
-        message: "拒绝退款成功！",
-        type: "success"
-      });
+      // 发生请求，拒绝退款
+      this.$axios
+        .post(this.$axios.baseURL + "/api/market/refund", {
+          orderId: this.returningOrder.rows[this.returningOrder.index].orderId,
+          op: 1
+        })
+        .then(response => {
+          if (response.data.checked == true) {
+            this.returningOrder.rows.splice(this.returningOrder.index, 1);
+            this.rejectReturnDialogVisiable = false;
+            this.$message({
+              message: "拒绝退款成功！",
+              type: "success"
+            });
+          } else {
+            this.returningOrder.rows.splice(this.returningOrder.index, 1);
+            this.rejectReturnDialogVisiable = false;
+            this.$message({
+              message: "拒绝退款失败！",
+              type: "error"
+            });
+          }
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: "拒绝退款失败，请重试。",
+            type: "warning"
+          });
+        });
     }
+  },
+  created() {
+    // 发送请求。获取退款订单列表
+    this.$axios
+      .get(this.$axios.baseURL + "/api/market/refundlist")
+      .then(response => {
+        this.orderList = response.data.orderList;
+        this.$message({
+          message: "获取退款订单列表成功！",
+          type: "success"
+        });
+      })
+      .catch(error => {
+        window.console.log(error);
+        this.$message({
+          message: "获取退款订单列表失败！",
+          type: "error"
+        });
+      });
   }
 };
 </script>

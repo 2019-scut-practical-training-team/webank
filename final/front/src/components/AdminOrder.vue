@@ -33,7 +33,11 @@
           label="宠物价格"
           width="80px"
         ></el-table-column>
-        <el-table-column prop="orderStatus" label="订单状态" width="80px"></el-table-column>
+        <el-table-column
+          prop="orderStatus"
+          label="订单状态"
+          width="80px"
+        ></el-table-column>
       </el-table>
     </el-card>
   </div>
@@ -44,45 +48,26 @@ export default {
   name: "adminOrder",
   data() {
     return {
-      orderList: [
-        {
-          orderId: 1,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1
-        },
-        {
-          orderId: 1,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 0
-        },
-        {
-          orderId: 1,
-          orderBuyer: "0x123",
-          orderSeller: "0x456",
-          orderTime: "yyyy-MM-dd HH:mm:ss",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1
-        },
-        {
-          orderId: 4,
-          orderBuyer: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderSeller: "0x35aa03c98231a21a2c424c1d2bdd88ae654a44a6",
-          orderTime: "Tue Jul 02 10:25:10 CST 2019",
-          petId: 1,
-          petPrice: 2000,
-          orderStatus: 1,
-        }
-      ]
+      orderList: null
     };
+  },
+  created() {
+    this.$axios
+      .get(this.$axios.baseURL + "/api/market/orders")
+      .then(response => {
+        this.orderList = response.data.orderList;
+        this.$message({
+          message: "获取市场所有订单列表成功！",
+          type: "success"
+        });
+      })
+      .catch(error => {
+        window.console.log(error);
+        this.$message({
+          message: "获取市场所有订单列表失败！",
+          type: "error"
+        });
+      });
   }
 };
 </script>

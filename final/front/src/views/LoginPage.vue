@@ -47,9 +47,7 @@
     >
       <span>是否确认注册账号</span>
       <span slot="footer">
-        <el-button type="primary" @click="signUpDialogVisible = false"
-          >确认</el-button
-        >
+        <el-button type="primary" @click="submintRegister()">确认</el-button>
         <el-button @click="signUpDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -59,7 +57,7 @@
 <script>
 export default {
   name: "LoginPage",
-  data: function() {
+  data() {
     var validatePrivateKey = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密钥"));
@@ -85,34 +83,50 @@ export default {
     getHeight() {
       this.backgroundHeight.height = window.innerHeight / 2.8 + "px";
     },
+    //登录
     login(formName) {
       this.$refs[formName].validate(valid => {
         // window.console.log(this.$axios.baseURL);
         if (valid) {
-          // 登录成功
-          // 模拟登录
-          // sessionStorage.setItem("privateKey", "123456");
-          // sessionStorage.setItem("address", "123456");
-          // // 进入管理员页面
-          // let identity = 2;
-          // sessionStorage.setItem("identity", identity);
-          // // 路由跳转
-          // switch (identity) {
-          //   case 1:
-          //     this.$router.push("/user");
-          //     break;
-          //   case 2:
-          //     this.$router.push("/admin");
-          //     break;
-          // }
+          this.$axios
+            .post(this.$axios.baseURL + "/api/signin", {
+              key: this.form.privateKey
+            })
+            .then(response => {
+              if (response.data.identity === 0) {
+                // identity === 0 不存在该用户
+                this.$message({
+                  message: "登录失败！该用户不存在！",
+                  type: "error"
+                });
+              } else if (response.data.identity === -1) {
+                this.$message({
+                  message: "登录失败！",
+                  type: "error"
+                });
+              } else {
+                // identity === 1 or 2  登录成功
+                sessionStorage.setItem("privateKey", this.form.privateKey);
+                sessionStorage.setItem("address", response.data.address);
+                sessionStorage.setItem("identity", response.data.identity);
 
-          this.$axios.get( this.$axios.baseURL + "/api/register",{
-            key: this.form.privateKey
-          }).then((response) => {
-            window.console.log(response);
-          }).catch((error) => {
-            window.console.log(error);
-          })
+                switch (response.data.identity) {
+                  case 1:
+                    this.$router.push("/user");
+                    break;
+                  case 2:
+                    this.$router.push("/admin");
+                    break;
+                }
+              }
+            })
+            .catch(error => {
+              window.console.log(error);
+              this.$message({
+                message: "登录失败",
+                type: "error"
+              });
+            });
         } else {
           this.$message({
             message: "登录失败",
@@ -121,13 +135,47 @@ export default {
           return false;
         }
       });
+    },
+    // 注册
+    submintRegister() {
+      this.$axios
+        .get(this.$axios.baseURL + "/api/register")
+        .then(response => {
+          if (response.data.checked == true) {
+            this.form.privateKey = response.data.key;
+            this.signUpDialogVisible = false;
+            this.$message({
+              message: "注册成功！",
+              type: "success"
+            });
+            this.$message({
+              message: "已自动帮您填写，请另外记录私钥！",
+              type: "success",
+              duration: 5000
+            });
+          } else {
+            this.signUpDialogVisible = false;
+            this.$message({
+              message: "注册失败！",
+              type: "error"
+            });
+          }
+        })
+        .catch(error => {
+          window.console.log(error);
+          this.$message({
+            message: "注册失败！请重试。",
+            type: "error"
+          });
+        });
+    },
+    switchToLogin() {
+      this.signUpDialogVisible = false;
     }
   },
   created() {
     window.addEventListener("resize", this.getHeight);
     this.getHeight();
-    // 开发需要，直接跳转
-    // this.login();
   },
   destroyed() {
     window.removeEventListener("resize", this.getHeight);

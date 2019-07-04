@@ -2,6 +2,7 @@ package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Contracts.Market;
+import org.fisco.bcos.Dao.Interface.IBalanceDao;
 import org.fisco.bcos.Service.Interface.IBalanceService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -22,28 +23,18 @@ public class BalanceService implements IBalanceService {
 
 
     @Autowired
-    private Web3j web3j;
-
-    @Autowired
-    private Variables variables;
+    private IBalanceDao balanceDao;
 
 
-    public JSONObject getBalance(String key) throws Exception{
+    public JSONObject getBalance(String key){
 
-        EncryptType.encryptType = 0;
-        Credentials credentials = GenCredential.create(key);
-
-        Market market = Market.load(
-                variables.getMarket(),
-                web3j,
-                credentials,
-                new StaticGasProvider(
-                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
-
-        BigInteger balance = market.getBalanceOfMe().send();
-
-        JSONObject object = new JSONObject();
-        object.put("balance",balance);
-        return object;
+        try {
+            return balanceDao.getBalance(key);
+        }
+        catch (Exception e){
+            JSONObject object = new JSONObject();
+            object.put("balance", -1);
+            return object;
+        }
     }
 }

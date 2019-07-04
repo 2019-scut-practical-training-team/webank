@@ -3,6 +3,7 @@ package org.fisco.bcos.Controller.User;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Bean.PetsListItem;
+import org.fisco.bcos.Service.Impl.IfCreatedService;
 import org.fisco.bcos.Service.Impl.ReturnService;
 import org.fisco.bcos.Service.Interface.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,10 @@ public class UserController {
     private IUnsellService unsellService;
 
     @Autowired
-    private ReturnService returnService;
+    private IReturnService returnService;
+
+    @Autowired
+    private IIfCreatedService ifCreatedService;
 
     @RequestMapping(value = "/balance",method = RequestMethod.POST)
     private JSONObject getBalance(@RequestBody String input)throws Exception{
@@ -116,6 +120,13 @@ public class UserController {
         String address = object.getString("key");
         int petId = object.getInteger("petId");
         return unsellService.unsell(address,petId);
+    }
+
+    @RequestMapping(value = "/ifcreated",method = RequestMethod.POST)
+    private JSONObject ifCreated(@RequestBody String input){
+        JSONObject object = JSON.parseObject(input);
+        String key = object.getString("key");
+        return ifCreatedService.ifCreated(key);
     }
 
 

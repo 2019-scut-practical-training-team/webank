@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Contracts.Market;
 import org.fisco.bcos.Contracts.OrderContract;
+import org.fisco.bcos.Dao.Interface.IReturnDao;
 import org.fisco.bcos.Service.Interface.IReturnService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -25,36 +26,31 @@ import java.util.List;
 public class ReturnService implements IReturnService {
 
     @Autowired
-    private Web3j web3j;
-
-    @Autowired
-    private Variables variables;
+    private IReturnDao returnDao;
 
     @Override
     public JSONObject returnOrder(String key, int orderId,String reason) throws Exception {
-        EncryptType.encryptType = 0;
-        Credentials credentials = GenCredential.create(key);
+        try {
+            TransactionReceipt transactionReceipt = returnDao.applyReturn(key,orderId,reason);
 
-        OrderContract orderContract = OrderContract.load(
-                variables.getOrder(),
-                web3j,
-                credentials,
-                new StaticGasProvider(
-                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+            String status = transactionReceipt.getStatus();
 
+            JSONObject object = new JSONObject();
 
-        TransactionReceipt transactionReceipt = orderContract.applyForReturn(String.valueOf(orderId),reason).send();
-        String status = transactionReceipt.getStatus();
+            if (status.equals("0x0"))
+                object.put("checked",true);
 
-        JSONObject object = new JSONObject();
+            else if (status.equals("0x16"))
+                object.put("checked",false);
 
-        if (status.equals("0x0"))
-            object.put("checked",true);
+            return object;
 
-        else if (status.equals("0x16"))
-            object.put("checked",false);
-
-        return object;
+        }
+        catch (Exception e){
+            JSONObject object = new JSONObject();
+            object.put("checked", "error");
+            return object;
+        }
 
     }
 }

@@ -1,11 +1,11 @@
 pragma solidity ^0.4.25;
 import "./DataProcess.sol";
-//import "./Market.sol";
 
+//接口，调用market合约函数
 interface Market {
     function changePetOwner(address _from, address _to, string _petId, address _caller) external;
     function payByAdmin(address _from,address _to, uint16 _price, address _caller) external;
-    function getPetOwner(string _petId) external view returns(address);
+    function orderGetPetOwner(string _petId, address _caller) external view returns(address);
 }
 
 contract OrderContract is DataProcess{
@@ -20,7 +20,7 @@ contract OrderContract is DataProcess{
         uint8 orderStatus;
         string returnReason;
     }
-    //声明变量：market合约地址，管理员地址，订单列表，订单id
+    //声明变量：market合约地址，管理员地址，订单列表，订单id计数器
     Market MK;
     address private adminAddress;
     Order[] public orderList;
@@ -38,14 +38,13 @@ contract OrderContract is DataProcess{
         _;
     }
     
-    
-    //内部管理员函数：
-    //设置market合约地址
+    //设置market合约地址，合约部署成功后调用
     function setMarketAddress(address _mkAddress) public isAdmin(msg.sender){
         MK = Market(_mkAddress);
     }
 
 
+    //market合约调用的函数：
     //创建一个新订单，market管理员调用
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) public isAdmin(_caller) {
         orderList.push(Order(getIntToString(orderIdNum), _buyer, _seller, _time, _petId, _petPrice, 0, ""));
@@ -57,13 +56,16 @@ contract OrderContract is DataProcess{
     //外部可调用函数：
 
     //订单相关：
+    
     //公用获得订单函数，买方，卖方，管理员可看
     //输入订单下标
     //返回 订单id，买家，卖家，时间，宠物id，宠物价格，订单状态
     function getOrderByIndex(uint _orderIndex) view public returns (string,address,address,string,string,uint16,uint8){
+        //卖家，买家，管理员可看
         require(orderList[_orderIndex].orderBuyer==msg.sender || orderList[_orderIndex].orderSeller==msg.sender || adminAddress==msg.sender);
         return (orderList[_orderIndex].orderId,orderList[_orderIndex].orderBuyer,orderList[_orderIndex].orderSeller,orderList[_orderIndex].orderTime,orderList[_orderIndex].petId,orderList[_orderIndex].petPrice,orderList[_orderIndex].orderStatus);
     }
+    
     //返回退款原因
     function getReturnReasonByIndex(uint _orderIndex) view public isAdmin(msg.sender) returns(string) {
         return (orderList[_orderIndex].returnReason);
@@ -134,7 +136,7 @@ contract OrderContract is DataProcess{
     //用户部分：
     //用户获得自己的订单列表
     //返回订单下标数组
-    function userGetOrderId() public view returns(uint[]){
+    function userGetOrderIndex() public view returns(uint[]){
         uint count=0;
         for(uint i=0;i<orderList.length;i++){
             if(orderList[i].orderBuyer == msg.sender || orderList[i].orderSeller == msg.sender){
@@ -161,7 +163,7 @@ contract OrderContract is DataProcess{
                 //判断申请者为买方且订单状态为可退货
                 require(orderList[i].orderBuyer == msg.sender, "You are not the buyer of this order!");
                 require(orderList[i].orderStatus == 0, "This order can't be return!");
-                require(MK.getPetOwner(orderList[i].petId)==msg.sender);
+                require(MK.orderGetPetOwner(orderList[i].petId, msg.sender)==msg.sender);
                 orderList[i].orderStatus = 1;
                 orderList[i].returnReason = _reason;
             }

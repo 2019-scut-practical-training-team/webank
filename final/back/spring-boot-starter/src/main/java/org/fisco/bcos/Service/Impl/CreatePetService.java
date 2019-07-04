@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections4.bidimap.AbstractBidiMapDecorator;
 import org.fisco.bcos.Bean.PetsListItem;
 import org.fisco.bcos.Contracts.Market;
+import org.fisco.bcos.Dao.Interface.ICreatePetDao;
 import org.fisco.bcos.Service.Interface.ICreatePetService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -29,36 +30,32 @@ import lombok.extern.slf4j.Slf4j;
 public class CreatePetService implements ICreatePetService {
 
     @Autowired
-    private Web3j web3j;
-
-    @Autowired
-    private Variables variables;
+    private ICreatePetDao createPetDao;
 
     @Override
-    public JSONObject createPet(String key, PetsListItem item) throws Exception{
-        EncryptType.encryptType = 0;
-        Credentials credentials = GenCredential.create(key);
+    public JSONObject createPet(String key, PetsListItem item) {
 
 
-        Market market = Market.load(
-                variables.getMarket(),
-                web3j,
-                credentials,
-                new StaticGasProvider(
-                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+        try {
+            TransactionReceipt transactionReceipt = createPetDao.createPet(key,item);
+            String status = transactionReceipt.getStatus();
+            JSONObject jsonObject = new JSONObject();
+            if(status.equals("0x0")) {
 
-        TransactionReceipt transactionReceipt = market.createPet(item.getPetType(),BigInteger.valueOf(item.getPetPrice()),item.getPetName(),item.getPetImg(), item.getPetIntro()).send();
+                jsonObject.put("checked",true);
+            }
+            else
+                jsonObject.put("checked",false);
 
-        String status = transactionReceipt.getStatus();
+            return jsonObject;
+        }
+        catch (Exception e){
 
-        JSONObject object = new JSONObject();
+            JSONObject object = new JSONObject();
 
-        if (status.equals("0x0"))
-            object.put("checked",true);
+            object.put("checked","error");
 
-        else if (status.equals("0x16"))
-            object.put("checked",false);
-
-        return object;
+            return object;
+        }
     }
 }

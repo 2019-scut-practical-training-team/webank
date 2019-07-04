@@ -2,6 +2,7 @@ package org.fisco.bcos.Service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.Contracts.Market;
+import org.fisco.bcos.Dao.Interface.ISellDao;
 import org.fisco.bcos.Service.Interface.ISellService;
 import org.fisco.bcos.Variables;
 import org.fisco.bcos.constants.GasConstants;
@@ -21,37 +22,34 @@ public class
 SellService implements ISellService {
 
     @Autowired
-    private Web3j web3j;
-
-    @Autowired
-    private Variables variables;
+    private ISellDao sellDaol;
 
     @Override
     public JSONObject sell(String key, int petId) throws Exception{
 
-        EncryptType.encryptType = 0;
-        Credentials credentials = GenCredential.create(key);
+        try {
+            TransactionReceipt transactionReceipt = sellDaol.sell(key,petId);
 
-        Market market = Market.load(
-                variables.getMarket(),
-                web3j,
-                credentials,
-                new StaticGasProvider(
-                        GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+            String status = transactionReceipt.getStatus();
+
+            JSONObject object = new JSONObject();
+
+            if (status.equals("0x0"))
+                object.put("checked",true);
+
+            else if (status.equals("0x16"))
+                object.put("checked",false);
 
 
-        TransactionReceipt transactionReceipt =  market.sellPet(String.valueOf(petId)).send();
+            return object;
 
-        String status = transactionReceipt.getStatus();
+        }
+        catch (Exception e){
+            JSONObject object = new JSONObject();
+            object.put("checked", "error");
+            return object;
+        }
 
-        JSONObject object = new JSONObject();
 
-        if (status.equals("0x0"))
-            object.put("checked",true);
-
-        else if (status.equals("0x16"))
-            object.put("checked",false);
-
-        return object;
     }
 }

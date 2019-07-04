@@ -4,6 +4,7 @@ import "./DataProcess.sol";
 //接口，调用order合约函数
 interface OrderContract{
     function createOrder(address _buyer, address _seller, string _time, string _petId, uint16 _petPrice, address _caller) external;
+    function getPetOnReturn(string _petId) external view returns(uint8);
 }
 
 contract Market is DataProcess{
@@ -173,6 +174,15 @@ contract Market is DataProcess{
             }
         }
     }
+    function getPetStatus(string _petId, address _caller) public view returns(uint8) {
+        //只有宠物拥有者可查看
+        require(petIdToOwner[_petId]==_caller, "You are not the own of this pet!");
+        for(uint i=0;i<petList.length;i++){
+            if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
+                return petList[i].petStatus;
+            }
+        }
+    }
     
     
 
@@ -262,6 +272,7 @@ contract Market is DataProcess{
     //输入 宠物id
     function sellPet(string _petId) public {
         require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
+        require(OD.getPetOnReturn(_petId) == 0, "Your pet is on return!");
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(_petId)) == keccak256(abi.encodePacked(petList[i].petId))){
                 require(petList[i].petStatus==0, "This pet is on sell!");

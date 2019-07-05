@@ -11,7 +11,8 @@ axios.default.withCredentials = true;
 
 // 设置基础api,设置为后台的IP
 // axios.default.baseURL = "http://110.64.72.19:8080"; // 服务器1
-axios.default.baseURL = "http://110.64.72.21:8080"; // 服务器2
+// axios.default.baseURL = "http://110.64.72.21:8080"; // 服务器2
+axios.default.baseURL = "http://110.64.91.113:8080"; // 服务器3
 // 绑定到Vue上
 Vue.prototype.$axios = axios;
 

@@ -11,15 +11,21 @@ import org.fisco.bcos.web3j.protocol.Web3j;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+
 public class ContractTest extends BaseTest {
 
     @Autowired private Web3j web3j;
     @Autowired private Variables variables;
+
+    @Value("")
 
     @Test
     public void deployAndCallHelloWorld() throws Exception {

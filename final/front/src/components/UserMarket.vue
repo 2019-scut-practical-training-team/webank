@@ -14,6 +14,7 @@
           <div class="pet-market-info">
             <div style="font-size: 23px">{{ pet.petName }}</div>
             <div>{{ pet.petType }}</div>
+            <div>{{ "ID:" + pet.petId }}</div>
             <div>{{ "￥" + pet.petPrice }}</div>
             <div>{{ pet.petIntro }}</div>
           </div>
@@ -155,7 +156,7 @@ export default {
 }
 .pet-market-info {
   padding: 14px;
-  height: 120px;
+  height: 140px;
 }
 .pet-market-img {
   width: @pet-img-width;

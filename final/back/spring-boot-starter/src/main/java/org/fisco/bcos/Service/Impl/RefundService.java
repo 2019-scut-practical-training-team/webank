@@ -24,16 +24,7 @@ public class RefundService implements IRefundService {
     @Override
     public JSONObject refund(String orderid, int op) throws Exception{
         try {
-            TransactionReceipt transactionReceipt = refundDao.refund(orderid, op);
-            JSONObject send = new JSONObject();
-
-            if (transactionReceipt.getStatus().equals("0x0")){
-                send.put("checked",true);
-            }
-            else if (transactionReceipt.getStatus().equals("0x16")){
-                send.put("checked",false);
-            }
-            return send;
+            return refundDao.refund(orderid, op);
         }
         catch (Exception e){
             JSONObject object = new JSONObject();

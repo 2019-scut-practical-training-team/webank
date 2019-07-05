@@ -298,6 +298,7 @@ contract Market is DataProcess{
         require(petIdToOwner[_petId] == msg.sender, "You are not the owner of this pet!");
         for(uint i=0;i<petList.length;i++){
             if(keccak256(abi.encodePacked(petList[i].petId)) == keccak256(abi.encodePacked(_petId))){
+                require(petList[i].petStatus==0,"You can not change it's info because it's on sell");
                 petList[i].petName = _name;
                 petList[i].petType = _type;
                 petList[i].petPrice = _price;

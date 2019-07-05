@@ -38,10 +38,10 @@
           label="退款理由"
           width="140px"
         ></el-table-column>
-        <el-table-column fixed="right" label="操作" width="100px">
+        <el-table-column fixed="right" label="操作" width="150px">
           <template slot-scope="scope">
             <el-button
-              type="text"
+              type="primary"
               size="small"
               @click.native.prevent="
                 handleConfirmReturn(scope.$index, orderList)
@@ -49,7 +49,7 @@
               >同意</el-button
             >
             <el-button
-              type="text"
+              type="danger"
               size="small"
               @click="handleRejectReturn(scope.$index, orderList)"
               >拒绝</el-button
@@ -200,7 +200,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .return-orders-card {
-  width: 1100px;
+  width: 1200px;
   margin: 80px 0;
 }
 </style>

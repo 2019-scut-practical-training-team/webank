@@ -47,6 +47,7 @@
           <div class="pet-info">
             <div style="font-size: 23px">{{ pet.petName }}</div>
             <div>{{ pet.petType }}</div>
+            <div>{{ "ID:" + pet.petId }}</div>
             <div>{{ "￥" + pet.petPrice }}</div>
             <div>{{ pet.petIntro }}</div>
           </div>
@@ -458,6 +459,7 @@ export default {
                 this.$refs[formName].resetFields();
                 // 重新获取宠物列表
                 setTimeout(this.getUserPetList(), 1000);
+                setTimeout(this.getCanCreateNewPet(), 1000);
               } else {
                 this.newPetDialogVisiable = false;
                 this.$message({
@@ -818,7 +820,7 @@ export default {
 }
 .pet-info {
   padding: 14px;
-  height: 120px;
+  height: 140px;
 }
 .pet-img {
   width: @pet-img-width;

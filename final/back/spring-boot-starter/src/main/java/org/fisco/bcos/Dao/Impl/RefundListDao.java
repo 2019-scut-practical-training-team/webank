@@ -37,6 +37,8 @@ public class RefundListDao implements IRefundListDao {
 
         List index = orderContract.adminGetReturnOrderIndex().send();
 
+
+
         for (int i = 0; i < index.size(); i++){
             JSONObject jsonObject = new JSONObject();
 
@@ -49,7 +51,10 @@ public class RefundListDao implements IRefundListDao {
             jsonObject.put("petId", t.getValue5());
             jsonObject.put("petPrice", t.getValue6());
             jsonObject.put("orderStatus", t.getValue7());
+            String reason = orderContract.getReturnReasonByIndex(id).send();
+            jsonObject.put("reason",reason);
             jsonArray.add(jsonObject);
+
         }
 
         send.put("orderList", jsonArray);

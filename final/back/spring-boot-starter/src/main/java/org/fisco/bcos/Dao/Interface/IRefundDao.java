@@ -4,5 +4,5 @@ import com.alibaba.fastjson.JSONObject;
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public interface IRefundDao {
-    public TransactionReceipt refund(String orderid, int op) throws Exception;
+    public JSONObject refund(String orderid, int op) throws Exception;
 }

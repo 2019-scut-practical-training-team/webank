@@ -14,6 +14,7 @@
           <div class="pet-market-info">
             <div style="font-size: 23px">{{ pet.petName }}</div>
             <div>{{ pet.petType }}</div>
+            <div>{{ "ID:" + pet.petId }}</div>
             <div>{{ "￥" + pet.petPrice }}</div>
             <div>{{ pet.petIntro }}</div>
           </div>
@@ -35,7 +36,7 @@ export default {
     this.$axios
       .get(this.$axios.baseURL + "/api/market/pets")
       .then(response => {
-        this.petList = response.data.petList;
+        this.petList = response.data.petsList;
         this.$message({
           message: "获取在售宠物列表成功!",
           type: "success"
@@ -67,7 +68,7 @@ export default {
 }
 .pet-market-info {
   padding: 14px;
-  height: 120px;
+  height: 140px;
 }
 .pet-market-img {
   width: @pet-img-width;

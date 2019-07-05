@@ -123,9 +123,10 @@ contract OrderContract is DataProcess{
         for(uint i=0;i<orderList.length;i++) {
             if(keccak256(abi.encodePacked(_orderId)) == keccak256(abi.encodePacked(orderList[i].orderId))){
                 require(orderList[i].orderStatus==1);
-                orderList[i].orderStatus = 2;
+                orderList[i].orderStatus = 3;
                 MK.changePetOwner(orderList[i].orderBuyer, orderList[i].orderSeller, orderList[i].petId, adminAddress);
                 MK.payByAdmin(orderList[i].orderSeller,orderList[i].orderBuyer,orderList[i].petPrice, adminAddress);
+                orderList[i].orderStatus = 2;
                 break;
             }
         }

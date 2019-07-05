@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(value = "variables")
 public class Variables {
 
-    private String market = "0xfb03b6734eac21370981e2e65524b563403fae4a";
-    private String order = "0xbb540d16d4f6413b74982170a5c961f2e93d56e9";
+    private String market = "0xf0c0b4879bb8bbf9aa71e02b54e74e30e0240237";
+    private String order = "0xb1d982f8d8ff180e55a319e5ac78275ad8edb617";
     private String admin = "2652b364efebbf7de39d0d28f30ff921a8fe18165fe1276e8990a9cb4ca1c8d6";  // can not use '0x' as prefix
 
 

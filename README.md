@@ -14,6 +14,7 @@
 │     ├── doc         # 项目文档
 │     ├── front       # 前端代码
 │     └── back        # 后端代码
+├── final report   # 课程报告
 └── weekly report  # 小组周报
 
 ```
